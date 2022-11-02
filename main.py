@@ -21,14 +21,15 @@ D = [i for i in range(nr_drivers)]
 N = [i for i in range(1, nr_passengers*2+nr_drivers)]
 NP = N[:int(len(N)/2)]
 ND = N[int(len(N)/2):]
-
 N_k = [0] + N + [len(N)+1]
 A_k = [(i, j) for i in N_k for j in N_k if i!=j]
+
 print(D)
 print(N)
-print([0] + NP)
+print(NP)
 print(ND)
 print(N_k)
+print(A_k)
 
 #parameters
 o_k = {0:0}
@@ -60,25 +61,31 @@ model.setObjective(quicksum(T_ij[i,j]*x[k,i,j] for i, j in A_k for k in D))
 model.addConstrs(quicksum(x[k,i,j] for j in NP + [7]) == 1 for i in o_k for k in D)
 model.addConstrs(quicksum(x[k,i,j] for i in [0] + ND) == 1 for j in d_k for k in D)
 model.addConstrs((quicksum(x[k,i,j] for i in N_k[1:]) == quicksum(x[k,i,j] for i in N_k[:-1])) for k in D for j in N_k)
-model.addConstrs((quicksum(x[k,i,j] for i in N_k) - quicksum(x[k,nr_passengers+i,j] for i in N_k))==0 for k in D for j in N_k)
+
+model.addConstrs((quicksum(x[k,i,j] for i in N_k) - quicksum(x[k,nr_passengers+i,j] for i in NP))==0 for k in D for j in N_k)
 model.addConstrs((quicksum(x[k,i,j] for k in D for j in N_k))-z[i]==0 for i in NP)
 
 #precedence constraint
 model.addConstrs(t[k,i] + T_ij[i, nr_passengers+i] - t[k, nr_passengers+i] <= 0 for k in D for i in NP)
 
 #time constraint
-model.addConstrs(t[k,i]+T_ij[i,j] - t[k,j] - M*(1-x[k,i,j]) <= 0 for k in D for i in N for j in N)
-model.addConstrs(A_k1[nr_passengers+i]<=t[k,nr_passengers+i]<=A_k2[nr_passengers+i] for k in D for i in NP)
-model.addConstrs(A_k1[k1]<=t[k, k1]<=A_k2[k1] for k in D for k1 in d_k)
+model.addConstrs(t[(k,i)]+T_ij[i,j] - t[(k,j)] - M*(1-x[k,i,j]) <= 0 for k in D for i in N for j in N if i!=j)
+model.addConstrs(A_k1[nr_passengers+i]<=t[k,nr_passengers+i] for k in D for i in NP)
+model.addConstrs(t[k,nr_passengers+i]<=A_k2[nr_passengers+i] for k in D for i in NP)
+
+model.addConstrs(A_k1[k1]<=t[k, k1] for k in D for k1 in d_k.values())
+model.addConstrs(t[k, k1]<=A_k2[k1] for k in D for k1 in d_k.values())
 
 model.addConstrs(t[k,nr_passengers+i] - t[k,i] <= T_k[i] for k in D for i in NP)
 model.addConstrs(t[k,k1] - t[k, k2] <= T_k[k] for k in D for k1 in d_k for k2 in o_k)
 
 #capacity constraints
-
 model.addConstrs(quicksum(x[k,i,j] for i in NP for j in N_k) <= Q_k[k] for k in D)
 
 model.Params.MITGap=0.1
+model.Params.TimeLimit=30
+model.optimize()
+
 
 
 

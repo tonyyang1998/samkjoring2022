@@ -15,4 +15,4 @@ c2=m.addConstr(x+y>=1)
 
 m.optimize()
 
-m.printAttr('X')
+m.printAttr('X')git

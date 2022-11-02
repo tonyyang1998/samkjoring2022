@@ -79,7 +79,7 @@ model.addConstrs(t[k, k1]<=A_k2[k1] for k in D for k1 in d_k.values())
 model.addConstrs(t[k,nr_passengers+i] - t[k,i] <= T_k[i] for k in D for i in NP)
 model.addConstrs(t[k,k1] - t[k, k2] <= T_k[k] for k in D for k1 in d_k for k2 in o_k)
 
-#capacity constraints
+#capacity constraintsi
 model.addConstrs(quicksum(x[k,i,j] for i in NP for j in N_k) <= Q_k[k] for k in D)
 
 model.Params.MITGap=0.1

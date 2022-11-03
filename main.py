@@ -47,20 +47,18 @@ x = model.addVars(pairs, vtype=GRB.BINARY, name ='x_kij')
 z = model.addVars(NP, vtype=GRB.BINARY, name='z_i')
 t = model.addVars(driver_node, vtype=GRB.CONTINUOUS, name='t_ki')
 
+model.update()
 
-
-
-print('hei', t[(0, 2)])
 
 model.modelSense = GRB.MINIMIZE
 model.setObjective(quicksum(T_ij[i,j]*x[k,i,j] for i, j in A_k for k in D))
 
 #routing constraints
-model.addConstrs(quicksum(x[k,i,j] for j in NP + [7]) == 1 for i in o_k for k in D)
-model.addConstrs(quicksum(x[k,i,j] for i in [0] + ND) == 1 for j in d_k for k in D)
+model.addConstrs(quicksum(x[k,i,j] for j in NP + [7]) == 1 for i in o_k.values() for k in D)
+model.addConstrs(quicksum(x[k,i,j] for i in [0] + ND) == 1 for j in d_k.values() for k in D)
 model.addConstrs((quicksum(x[k,i,j] for i in N_k[1:]) == quicksum(x[k,i,j] for i in N_k[:-1])) for k in D for j in N_k)
 
-model.addConstrs((quicksum(x[k,i,j] for i in N_k) - quicksum(x[k,nr_passengers+i,j] for i in NP))==0 for k in D for j in N_k)
+model.addConstrs((quicksum(x[k,i,j] for i in NP) - quicksum(x[k,nr_passengers+i,j] for i in NP))==0 for k in D for j in N_k)
 model.addConstrs((quicksum(x[k,i,j] for k in D for j in N_k))-z[i]==0 for i in NP)
 
 #precedence constraint
@@ -77,11 +75,11 @@ model.addConstrs(t[k, k1]<=A_k2[k1] for k in D for k1 in d_k.values())
 model.addConstrs(t[k,nr_passengers+i] - t[k,i] <= T_k[i] for k in D for i in NP)
 model.addConstrs(t[k,k1] - t[k, k2] <= T_k[k] for k in D for k1 in d_k for k2 in o_k)
 
-#capacity constraintsi
+#capacity constraints
 model.addConstrs(quicksum(x[k,i,j] for i in NP for j in N_k) <= Q_k[k] for k in D)
 
-model.Params.MITGap=0.1
-model.Params.TimeLimit=30
+model.Params.MIPGap=0.1
+model.Params.TimeLimit = 30
 model.optimize()
 
 

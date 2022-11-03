@@ -24,18 +24,11 @@ ND = N[int(len(N)/2):]
 N_k = [0] + N + [len(N)+1]
 A_k = [(i, j) for i in N_k for j in N_k if i!=j]
 
-print(D)
-print(N)
-print(NP)
-print(ND)
-print(N_k)
-print(A_k)
-
 #parameters
 o_k = {0:0}
 d_k = {0:7}
 T_k = {i: 40 for i in range(nr_drivers+nr_passengers)}
-T_ij = {(0, 1): 6, (0, 2): 8, (0, 3): 12, (0, 4): 100, (0, 5): 6.100, (0, 6): 7.100, (0, 7): 8.100, (1, 0): 2.6, (1, 2): 7, (1, 3): 2.5, (1, 4): 100, (1, 5): 15, (1, 6): 100, (1, 7): 100,
+T_ij = {(0, 1): 6, (0, 2): 8, (0, 3): 12, (0, 4): 100, (0, 5): 100, (0, 6): 100, (0, 7): 100, (1, 0): 2.6, (1, 2): 7, (1, 3): 2.5, (1, 4): 100, (1, 5): 15, (1, 6): 100, (1, 7): 100,
         (2, 0): 8, (2, 1): 7, (2, 3): 4, (2, 4): 15, (2, 5): 100, (2, 6): 100, (2, 7): 100, (3, 0): 12, (3, 1): 5, (3, 2): 4, (3, 4): 10, (3, 5): 7, (3, 6): 15, (3, 7): 100,
         (4, 0): 100, (4, 1): 100, (4, 2): 15, (4, 3): 10, (4, 5): 7, (4, 6): 8, (4, 7): 6, (5, 0): 100, (5, 1): 15, (5, 2): 100, (5, 3): 7, (5, 4): 7, (5, 6): 4, (5, 7): 100,
         (6, 0): 100, (6, 1): 100, (6, 2): 100, (6, 3): 15, (6, 4): 8, (6, 5): 4, (6, 7): 5, (7, 0): 100, (7, 1): 100, (7, 2): 100, (7, 3): 100, (7, 4): 6, (7, 5): 100, (7, 6): 5}
@@ -53,6 +46,11 @@ driver_node=[(k, i) for k in D for i in N_k]
 x = model.addVars(pairs, vtype=GRB.BINARY, name ='x_kij')
 z = model.addVars(NP, vtype=GRB.BINARY, name='z_i')
 t = model.addVars(driver_node, vtype=GRB.CONTINUOUS, name='t_ki')
+
+
+
+
+print('hei', t[(0, 2)])
 
 model.modelSense = GRB.MINIMIZE
 model.setObjective(quicksum(T_ij[i,j]*x[k,i,j] for i, j in A_k for k in D))

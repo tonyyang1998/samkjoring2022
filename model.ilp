@@ -1,0 +1,10 @@
+\ Model RRP_copy
+\ LP format - for model browsing. Use MPS format to capture full model detail.
+Minimize
+ 
+Subject To
+ R21: t_ki[0,1] - t_ki[0,4] <= -100
+ R83: t_ki[0,4] <= 90
+Bounds
+ t_ki[0,4] free
+End

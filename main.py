@@ -8,8 +8,8 @@ nr_passengers=3
 nr_drivers=1
 
 #plot & coordinates
-xc = [1,2,3,4,6,7,8,9]
-yc = [4,2,6,3,1,7,2,6]
+xc = [8,12,16,20,30,32,40, 42]
+yc = [12,18,8,16,20,12,10,18]
 
 plt.plot(xc[0],yc[0], c='r', marker = 's')
 plt.plot(xc[-nr_drivers],yc[-nr_drivers], c='r', marker = 's')
@@ -28,20 +28,25 @@ A_k = [(i, j) for i in N_k for j in N_k if i!=j]
 o_k = {0:0}
 d_k = {0:7}
 T_k = {i: 10000 for i in range(nr_drivers+nr_passengers)}
-print(T_k)
-T_ij = {(0, 1): 6, (0, 2): 8, (0, 3): 12, (0, 4): 100, (0, 5): 100, (0, 6): 100, (0, 7): 100,
-        (1, 0): 6, (1, 2): 7, (1, 3): 5, (1, 4): 9, (1, 5): 15, (1, 6): 100, (1, 7): 100,
-        (2, 0): 8, (2, 1): 7, (2, 3): 4, (2, 4): 15, (2, 5): 10, (2, 6): 100, (2, 7): 100,
+
+
+"""T_ij = {(0, 1): 6, (0, 2): 8, (0, 3): 12, (0, 4): 100, (0, 5): 100, (0, 6): 100, (0, 7): 100,
+        (1, 0): 6, (1, 2): 7, (1, 3): 5, (1, 4): 100, (1, 5): 15, (1, 6): 100, (1, 7): 100,
+        (2, 0): 8, (2, 1): 7, (2, 3): 4, (2, 4): 15, (2, 5): 100, (2, 6): 100, (2, 7): 100,
+>>>>>>> c55373515060719147f84ebca290d5007e4c9fa4
         (3, 0): 12, (3, 1): 5, (3, 2): 4, (3, 4): 10, (3, 5): 7, (3, 6): 15, (3, 7): 100,
         (4, 0): 100, (4, 1): 100, (4, 2): 15, (4, 3): 10, (4, 5): 7, (4, 6): 8, (4, 7): 6,
         (5, 0): 100, (5, 1): 15, (5, 2): 100, (5, 3): 7, (5, 4): 7, (5, 6): 4, (5, 7): 100,
         (6, 0): 100, (6, 1): 100, (6, 2): 100, (6, 3): 15, (6, 4): 8, (6, 5): 4, (6, 7): 5,
-        (7, 0): 100, (7, 1): 100, (7, 2): 100, (7, 3): 100, (7, 4): 6, (7, 5): 100, (7, 6): 5}
-#T_ij = {(i,j): np.hypot(xc[i]-xc[j], yc[i] - yc[j]) for i,j in A_k}
+        (7, 0): 100, (7, 1): 100, (7, 2): 100, (7, 3): 100, (7, 4): 6, (7, 5): 100, (7, 6): 5}"""
+T_ij = {(i,j): np.hypot(xc[i]-xc[j], yc[i] - yc[j]) for i,j in A_k}
+print(T_ij)
 Q_k = {i: 4 for i in range(nr_drivers)}
-A_k1 = {4:0, 5:0, 6: 0, 7: 0}
-A_k2 = {4:15000, 5:15000, 6: 15000, 7: 15000}
-M = 100000
+
+A_k1 = {4:100, 5:100, 6: 100, 7: 100}
+A_k2 = {4:1000, 5:1000, 6: 1000, 7: 1000}
+M = 1000
+
 
 
 model=Model('RRP')
@@ -78,10 +83,6 @@ model.update()
 model.addConstrs((quicksum(x[k,i,j] for k in D for i in N_k)) <= 1 for j in N_k)
 model.update()
 
-#lagt til constraint - må kanskje fjernes
-model.addConstrs((quicksum(x[k,i,j] for k in D) + quicksum(x[k,j,i] for k in D) <=1) for i in NP for j in NP)
-model.update()
-
 #precedence constraint
 model.addConstrs(t[k,i] + T_ij[i, nr_passengers+i] - t[k, nr_passengers+i] <= 0 for k in D for i in NP)
 model.update()
@@ -90,6 +91,7 @@ model.update()
 
 model.addConstrs(t[(k,i)]+T_ij[(i,j)] - t[(k,j)] - M*(1-x[k,i,j]) <= 0 for k in D for i in N_k for j in N_k if i!=j)
 model.update()
+
 model.addConstrs(A_k1[nr_passengers+i]<=t[k,nr_passengers+i] for k in D for i in NP)
 model.update()
 model.addConstrs(t[k,nr_passengers+i]<=A_k2[nr_passengers+i] for k in D for i in NP)
@@ -119,7 +121,6 @@ obj = model.getObjective()
 
 
 
-
 """model.computeIIS()
 model.write('model.MPS')
 model.write('model.lp')
@@ -132,7 +133,16 @@ for i,j in active_arcs:
 plt.plot(xc[0], yc[0], c='r', marker='s')
 plt.scatter(xc[1:], yc[1:], c='b')
 
-
 plt.show()
 print(active_arcs)
+
+for k1 in d_k.values():
+        print(k1)
+        for k in D:
+                print(A_k1[k1])
+                print(t[k, k1])
+                print(A_k1[k1] <= t[k, k1])
+                print(t[k, k1])
+                print(A_k2[k1])
+                print(t[k, k1]<=A_k2[k1])
 

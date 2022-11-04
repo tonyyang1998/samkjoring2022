@@ -3,8 +3,8 @@
 Minimize
  
 Subject To
- R21: t_ki[0,1] - t_ki[0,4] <= -100
- R83: t_ki[0,4] <= 90
+ R22: t_ki[0,1] - t_ki[0,4] <= -100
+ R84: t_ki[0,4] <= 50
 Bounds
  t_ki[0,4] free
 End

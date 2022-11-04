@@ -3,8 +3,13 @@
 Minimize
  
 Subject To
- R21: t_ki[0,1] - t_ki[0,4] <= -100
- R83: t_ki[0,4] <= 90
+ R1: x_kij[0,4,7] + x_kij[0,5,7] + x_kij[0,6,7] = 1
+ R17: x_kij[0,1,7] + x_kij[0,2,7] + x_kij[0,3,7] - x_kij[0,4,7]
+   - x_kij[0,5,7] - x_kij[0,6,7] = 0
+ R28: x_kij[0,0,7] + x_kij[0,1,7] + x_kij[0,2,7] + x_kij[0,3,7]
+   + x_kij[0,4,7] + x_kij[0,5,7] + x_kij[0,6,7] + x_kij[0,7,7] <= 1
 Bounds
- t_ki[0,4] free
+Binaries
+ x_kij[0,0,7] x_kij[0,1,7] x_kij[0,2,7] x_kij[0,3,7] x_kij[0,4,7]
+ x_kij[0,5,7] x_kij[0,6,7] x_kij[0,7,7]
 End

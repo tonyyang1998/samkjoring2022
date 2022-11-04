@@ -62,19 +62,29 @@ model.modelSense = GRB.MINIMIZE
 model.setObjective(quicksum(T_ij[i,j]*x[k,i,j] for i, j in A_k for k in D))
 #model.modelSense = GRB.MAXIMIZE
 #model.setObjective(quicksum(z[i] for i in NP))
+
 model.update()
 #routing constraints
 model.addConstrs(quicksum(x[k,i,j] for j in NP + [7]) == 1 for i in o_k.values() for k in D)
 model.update()
+#endre [0]
 model.addConstrs(quicksum(x[k,i,j] for i in ND) == 1 for j in d_k.values() for k in D)
 model.update()
-
-model.addConstrs((quicksum(x[k,i,j] for i in N_k[1:]) == quicksum(x[k,j,i] for i in N_k[:-1])) for k in D for j in N_k)
+model.addConstrs((quicksum(x[k,i,j] for j in N_k[1:]) == quicksum(x[k,j,i] for j in N_k[:-1])) for k in D for i in N_k[1:-1])
 model.update()
-model.addConstrs((quicksum(x[k,i,j] for i in NP) - quicksum(x[k,nr_passengers+i,j] for i in NP))==0 for k in D for j in N_k)
+model.addConstrs((quicksum(x[k,i,j] for j in NP) - quicksum(x[k,nr_passengers+i,j] for j in NP))==0 for k in D for i in NP)
 model.update()
 model.addConstrs((quicksum(x[k,i,j] for k in D for j in N_k))-z[i]==0 for i in NP)
 model.update()
+
+#ny constraint
+model.addConstrs((quicksum(x[k,i,j] for k in D for i in N_k)) <= 1 for j in N_k)
+model.update()
+
+#lagt til constraint
+model.addConstrs((quicksum(x[k,i,j] for k in D) + quicksum(x[k,j,i] for k in D) <=1) for i in NP for j in NP)
+model.update()
+
 #precedence constraint
 model.addConstrs(t[k,i] + T_ij[i, nr_passengers+i] - t[k, nr_passengers+i] <= 0 for k in D for i in NP)
 model.update()
@@ -103,17 +113,22 @@ model.update()
 
 model.Params.TimeLimit=30
 model.optimize()
+
+
 obj = model.getObjective()
-print(obj.getValue())
-for i in model.getVars():
-        print(i, i.x)
 
 active_arcs=[a for a in A_k if x[0, a[0], a[1]].x >0.99]
+
+#model.computeIIS()
+#model.write('model.MPS')
+#model.write('model.lp')
+#model.write('model.ilp')
 
 for i,j in active_arcs:
         plt.plot([xc[i], xc[j]], [yc[i],yc[j]], c='g', zorder=0)
 plt.plot(xc[0], yc[0], c='r', marker='s')
 plt.scatter(xc[1:], yc[1:], c='b')
+
 plt.show()
 print(active_arcs)
 

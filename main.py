@@ -39,11 +39,12 @@ T_k = {i: 10000 for i in range(nr_drivers+nr_passengers)}
         (5, 0): 100, (5, 1): 15, (5, 2): 100, (5, 3): 7, (5, 4): 7, (5, 6): 4, (5, 7): 100,
         (6, 0): 100, (6, 1): 100, (6, 2): 100, (6, 3): 15, (6, 4): 8, (6, 5): 4, (6, 7): 5,
         (7, 0): 100, (7, 1): 100, (7, 2): 100, (7, 3): 100, (7, 4): 6, (7, 5): 100, (7, 6): 5}"""
+
 T_ij = {(i,j): np.hypot(xc[i]-xc[j], yc[i] - yc[j]) for i,j in A_k}
-print(T_ij)
+
 Q_k = {i: 4 for i in range(nr_drivers)}
 
-A_k1 = {4:100, 5:100, 6: 100, 7: 100}
+A_k1 = {4:0, 5:0, 6: 0, 7: 0}
 A_k2 = {4:1000, 5:1000, 6: 1000, 7: 1000}
 M = 1000
 
@@ -74,7 +75,7 @@ model.addConstrs(quicksum(x[k,i,j] for i in [0]+ ND) == 1 for j in d_k.values() 
 model.update()
 model.addConstrs((quicksum(x[k,i,j] for j in N_k[1:]) == quicksum(x[k,j,i] for j in N_k[:-1])) for k in D for i in N_k[1:-1])
 model.update()
-model.addConstrs((quicksum(x[k,i,j] for j in N_k) - quicksum(x[k,nr_passengers+i,j] for j in N_k))==0 for k in D for i in NP)
+model.addConstrs((quicksum(x[k,i,j] for j in N_k) - quicksum(x[k,nr_passengers+i,j] for j in N_k)) == 0 for k in D for i in NP)
 model.update()
 model.addConstrs((quicksum(x[k,i,j] for k in D for j in N_k))-z[i]==0 for i in NP)
 model.update()
@@ -89,7 +90,7 @@ model.update()
 
 #time constraint
 
-model.addConstrs(t[(k,i)]+T_ij[(i,j)] - t[(k,j)] - M*(1-x[k,i,j]) <= 0 for k in D for i in N_k for j in N_k if i!=j)
+model.addConstrs(t[(k,i)]+T_ij[(i,j)] - t[(k,j)] - M*(1-x[k,i,j]) <= 0 for k in D for (i, j) in A_k)
 model.update()
 
 model.addConstrs(A_k1[nr_passengers+i]<=t[k,nr_passengers+i] for k in D for i in NP)
@@ -119,8 +120,6 @@ model.Params.TimeLimit=30
 model.optimize()
 obj = model.getObjective()
 
-
-
 """model.computeIIS()
 model.write('model.MPS')
 model.write('model.lp')
@@ -136,7 +135,10 @@ plt.scatter(xc[1:], yc[1:], c='b')
 plt.show()
 print(active_arcs)
 
-for k1 in d_k.values():
+for i in model.getVars():
+        print(i, i.x)
+
+"""for k1 in d_k.values():
         print(k1)
         for k in D:
                 print(A_k1[k1])
@@ -144,5 +146,5 @@ for k1 in d_k.values():
                 print(A_k1[k1] <= t[k, k1])
                 print(t[k, k1])
                 print(A_k2[k1])
-                print(t[k, k1]<=A_k2[k1])
+                print(t[k, k1]<=A_k2[k1])"""
 

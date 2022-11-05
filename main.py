@@ -52,7 +52,7 @@ T_k = {i: 10000 for i in range(nr_drivers+nr_passengers)}
 T_ij = {(i,j): np.hypot(xc[i]-xc[j], yc[i] - yc[j]) for i,j in A_k}
 print(T_ij)
 Q_k = {i: 4 for i in range(nr_drivers)}
-A_k1 = {4:40, 5:40, 6: 40, 7: 1000}
+A_k1 = {4:40, 5:80, 6: 40, 7: 100}
 A_k2 = {4:100, 5:100, 6: 100, 7: 10000}
 M = 10000
 
@@ -150,6 +150,8 @@ plt.scatter(xc[1:], yc[1:], c='b')
 plt.show()
 print(active_arcs)
 print(arc_sum)
+
+print(A_k1[7])
 
 
 

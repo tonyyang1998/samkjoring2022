@@ -52,21 +52,27 @@ T_k = {i: 10000 for i in range(nr_drivers+nr_passengers)}
 T_ij = {(i,j): np.hypot(xc[i]-xc[j], yc[i] - yc[j]) for i,j in A_k}
 print(T_ij)
 Q_k = {i: 4 for i in range(nr_drivers)}
-A_k1 = {4:40, 5:80, 6: 40, 7: 100}
-A_k2 = {4:100, 5:100, 6: 100, 7: 10000}
-M = 10000
+A_k1 = {4:0, 5:10, 6: 20, 7: 100}
+A_k2 = {4:100, 5:100, 6: 200, 7: 1000}
+M = 1000
+
+#start time parameter
+T = 0
 
 
 model=Model('RRP')
 
 pairs=[(k,i,j) for k in D for (i, j) in A_k]
 driver_node=[(k, i) for k in D for i in N_k]
+driver_node2=[(k, i) for k in D for i in N_k[1:]]
+
 x = model.addVars(pairs, vtype=GRB.BINARY, name ='x_kij')
 model.update()
 z = model.addVars(NP, vtype=GRB.BINARY, name='z_i')
 model.update()
 t = model.addVars(driver_node, vtype=GRB.CONTINUOUS, name='t_ki')
 model.update()
+#T1 = model.addVars(driver_node2, vtype=GRB.CONTINUOUS, name='T_ki')
 
 #model.modelSense = GRB.MINIMIZE
 #model.setObjective(quicksum(T_ij[i,j]*x[k,i,j] for i, j in A_k for k in D), GRB.MINIMIZE)
@@ -89,11 +95,8 @@ model.update()
 #ny constraint 1
 model.addConstrs((quicksum(x[k,i,j] for k in D for i in N_k if j!=i)) <= 1 for j in N_k)
 model.update()
-
 #ny constraint 2
-print(o_k.values())
 model.addConstr((quicksum(x[k,i,j] for k in D for i in N_k for j in o_k.values() if j!=i)) == 0)
-
 #ny constraint 3
 model.addConstr((quicksum(x[k,i,j] for k in D for i in d_k.values() for j in N_k if j!=i)) == 0)
 
@@ -120,12 +123,27 @@ model.update()
 model.addConstrs(t[k,k1] - t[k, k2] <= T_k[k] for k in D for k1 in d_k.values() for k2 in o_k.values())
 model.update()
 
+#ny timewindow constraint:
+
+model.addConstrs(x[k,i,j]*A_k1[j]<=(t[k,i]+T_ij[i,j]) * x[k,i,j] for k in D for i in NP for j in ND if i!=j)
+model.update()
+model.addConstrs(x[k,i,j]*A_k2[j]>=(t[k,i]+T_ij[i,j]) * x[k,i,j] for k in D for i in NP for j in ND if i!=j)
+model.update()
+
+#model.addConstrs(A_k1[k1]<=(t[k, k1]+T_ij[] for k in D for k1 in d_k.values())
+#model.update()
+#model.addConstrs(t[k, k1]<=A_k2[k1] for k in D for k1 in d_k.values())
+#model.update()
+
+
 #capacity constraint
 model.addConstrs(quicksum(x[k,i,j] for i in NP for j in N_k if j!=i) <= Q_k[k] for k in D)
 model.update()
 
+
 model.Params.TimeLimit=30
 model.optimize()
+
 obj = model.getObjective()
 for i in model.getVars():
         print(i, i.x)
@@ -152,6 +170,5 @@ print(active_arcs)
 print(arc_sum)
 
 print(A_k1[7])
-
 
 

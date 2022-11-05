@@ -11,6 +11,9 @@ nr_drivers=1
 xc = [8,12,16,20,30,32,40, 42]
 yc = [12,18,8,16,20,12,10,18]
 
+#xc = [1,2,3,4,6,7,8,9]
+#yc = [4,2,6,3,1,7,2,6]
+
 plt.plot(xc[0],yc[0], c='r', marker = 's')
 plt.plot(xc[-nr_drivers],yc[-nr_drivers], c='r', marker = 's')
 plt.scatter(xc[1:len(xc)-nr_drivers], yc[1:len(yc)-nr_drivers], c='b')
@@ -20,9 +23,12 @@ plt.show()
 D = [i for i in range(nr_drivers)]
 N = [i for i in range(1, nr_passengers*2+nr_drivers)]
 NP = N[:int(len(N)/2)]
+NPK=NP
 ND = N[int(len(N)/2):]
+NDK = ND
 N_k = [0] + N + [len(N)+1]
 A_k = [(i, j) for i in N_k for j in N_k if i!=j]
+
 
 print(D)
 print(N)
@@ -46,14 +52,14 @@ T_k = {i: 10000 for i in range(nr_drivers+nr_passengers)}
 T_ij = {(i,j): np.hypot(xc[i]-xc[j], yc[i] - yc[j]) for i,j in A_k}
 print(T_ij)
 Q_k = {i: 4 for i in range(nr_drivers)}
-A_k1 = {4:100, 5:100, 6: 100, 7: 100}
-A_k2 = {4:1000, 5:1000, 6: 1000, 7: 1000}
-M = 1000
+A_k1 = {4:40, 5:40, 6: 40, 7: 1000}
+A_k2 = {4:100, 5:100, 6: 100, 7: 10000}
+M = 10000
 
 
 model=Model('RRP')
 
-pairs=[(k,i,j) for k in D for i in N_k for j in N_k]
+pairs=[(k,i,j) for k in D for (i, j) in A_k]
 driver_node=[(k, i) for k in D for i in N_k]
 x = model.addVars(pairs, vtype=GRB.BINARY, name ='x_kij')
 model.update()
@@ -62,29 +68,34 @@ model.update()
 t = model.addVars(driver_node, vtype=GRB.CONTINUOUS, name='t_ki')
 model.update()
 
-model.modelSense = GRB.MINIMIZE
-model.setObjective(quicksum(T_ij[i,j]*x[k,i,j] for i, j in A_k for k in D))
-#model.modelSense = GRB.MAXIMIZE
-#model.setObjective(quicksum(z[i] for i in NP))
+#model.modelSense = GRB.MINIMIZE
+#model.setObjective(quicksum(T_ij[i,j]*x[k,i,j] for i, j in A_k for k in D), GRB.MINIMIZE)
+model.modelSense = GRB.MAXIMIZE
+model.setObjective(quicksum(z[i] for i in NP))
 
 model.update()
 #routing constraints
 model.addConstrs(quicksum(x[k,i,j] for j in NP + [7]) == 1 for i in o_k.values() for k in D)
 model.update()
-
 model.addConstrs(quicksum(x[k,i,j] for i in [0]+ ND) == 1 for j in d_k.values() for k in D)
 model.update()
-model.addConstrs((quicksum(x[k,i,j] for j in N_k[1:]) == quicksum(x[k,j,i] for j in N_k[:-1])) for k in D for i in N_k[1:-1])
+model.addConstrs((quicksum(x[k,i,j] for j in N_k[1:] if j!=i) == quicksum(x[k,j,i] for j in N_k[:-1] if j!=i)) for k in D for i in N_k[1:-1])
 model.update()
-model.addConstrs((quicksum(x[k,i,j] for j in N_k) - quicksum(x[k,nr_passengers+i,j] for j in N_k))==0 for k in D for i in NP)
+model.addConstrs((quicksum(x[k,i,j] for j in N_k if j!=i) - quicksum(x[k,nr_passengers+i,j] for j in ND + [7] if j!=(i+nr_passengers)))==0 for k in D for i in NP)
 model.update()
-model.addConstrs((quicksum(x[k,i,j] for k in D for j in N_k))-z[i]==0 for i in NP)
-model.update()
-
-#ny constraint
-model.addConstrs((quicksum(x[k,i,j] for k in D for i in N_k)) <= 1 for j in N_k)
+model.addConstrs((quicksum(x[k,i,j] for k in D for j in N_k if j!=i))-z[i]==0 for i in NP)
 model.update()
 
+#ny constraint 1
+model.addConstrs((quicksum(x[k,i,j] for k in D for i in N_k if j!=i)) <= 1 for j in N_k)
+model.update()
+
+#ny constraint 2
+print(o_k.values())
+model.addConstr((quicksum(x[k,i,j] for k in D for i in N_k for j in o_k.values() if j!=i)) == 0)
+
+#ny constraint 3
+model.addConstr((quicksum(x[k,i,j] for k in D for i in d_k.values() for j in N_k if j!=i)) == 0)
 
 #precedence constraint
 model.addConstrs(t[k,i] + T_ij[i, nr_passengers+i] - t[k, nr_passengers+i] <= 0 for k in D for i in NP)
@@ -99,7 +110,6 @@ model.update()
 model.addConstrs(t[k,nr_passengers+i]<=A_k2[nr_passengers+i] for k in D for i in NP)
 model.update()
 
-
 model.addConstrs(A_k1[k1]<=t[k, k1] for k in D for k1 in d_k.values())
 model.update()
 model.addConstrs(t[k, k1]<=A_k2[k1] for k in D for k1 in d_k.values())
@@ -111,7 +121,7 @@ model.addConstrs(t[k,k1] - t[k, k2] <= T_k[k] for k in D for k1 in d_k.values() 
 model.update()
 
 #capacity constraint
-model.addConstrs(quicksum(x[k,i,j] for i in NP for j in N_k) <= Q_k[k] for k in D)
+model.addConstrs(quicksum(x[k,i,j] for i in NP for j in N_k if j!=i) <= Q_k[k] for k in D)
 model.update()
 
 model.Params.TimeLimit=30
@@ -120,7 +130,6 @@ obj = model.getObjective()
 for i in model.getVars():
         print(i, i.x)
 
-
 """model.computeIIS()
 model.write('model.MPS')
 model.write('model.lp')
@@ -128,22 +137,19 @@ model.write('model.ilp')"""
 
 active_arcs=[a for a in A_k if x[0, a[0], a[1]].x >0.99]
 
+arc_sum=0
 for i,j in active_arcs:
         plt.plot([xc[i], xc[j]], [yc[i],yc[j]], c='g', zorder=0)
+
+for i in range(len(active_arcs)):
+        arc_sum += T_ij[active_arcs[i]]
+
 plt.plot(xc[0], yc[0], c='r', marker='s')
 plt.scatter(xc[1:], yc[1:], c='b')
 
 plt.show()
 print(active_arcs)
+print(arc_sum)
 
-print("Hei")
-for k1 in d_k.values():
-        print(k1)
-        for k in D:
-                print(A_k1[k1])
-                print(t[k, k1])
-                print(A_k1[k1] <= t[k, k1])
-                print(t[k, k1])
-                print(A_k2[k1])
-                print(t[k, k1]<=A_k2[k1])
+
 

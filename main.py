@@ -15,6 +15,7 @@ xc = []
 yc = []
 
 def add_coordinates():
+        """Add coordinates"""
         for drivers in drivers_json:
                 xc.append(drivers_json[drivers]['origin_xc'])
                 yc.append(drivers_json[drivers]['origin_yc'])
@@ -49,6 +50,7 @@ A_k1 = {}
 A_k2 = {}
 M = 1200
 def add_parameters():
+        """Add parameters"""
         for drivers in drivers_json:
                 o_k[drivers_json[drivers]['id']] = drivers_json[drivers]['id']
                 d_k[drivers_json[drivers]['id']] = drivers_json[drivers]['id'] + nr_passengers * 2 + nr_drivers
@@ -84,77 +86,54 @@ model.update()
 #model.setObjective(quicksum(T_ij[i,j]*x[k,i,j] for i, j in A_k for k in D), GRB.MINIMIZE)
 model.modelSense = GRB.MAXIMIZE
 model.setObjective(quicksum(z[i] for i in NP))
-
 model.update()
 
 
-'''Routing constraints'''
-model.addConstrs(quicksum(x[k,i,j] for j in NP + driver_destination_nodes) == 1 for i in o_k.values() for k in D)
-model.update()
-model.addConstrs(quicksum(x[k,i,j] for i in driver_origin_nodes + ND) == 1 for j in d_k.values() for k in D)
-model.update()
-model.addConstrs((quicksum(x[k,i,j] for j in N_k[nr_drivers:] if j!=i) == quicksum(x[k,j,i] for j in N_k[:-nr_drivers] if j!=i)) for k in D for i in N_k[nr_drivers:-nr_drivers])
-model.update()
+def add_constraints():
+        '''Constraints'''
+        '''Routing constraits'''
+        model.addConstrs(quicksum(x[k,i,j] for j in NP + driver_destination_nodes) == 1 for i in o_k.values() for k in D)
+        model.addConstrs(quicksum(x[k,i,j] for i in driver_origin_nodes + ND) == 1 for j in d_k.values() for k in D)
+        model.addConstrs((quicksum(x[k,i,j] for j in N_k[nr_drivers:] if j!=i) == quicksum(x[k,j,i] for j in N_k[:-nr_drivers] if j!=i)) for k in D for i in N_k[nr_drivers:-nr_drivers])
+        model.addConstrs((quicksum(x[k,i,j] for j in N_k if j!=i) - quicksum(x[k,nr_passengers+i,j] for j in ND + driver_destination_nodes if j!=(i+nr_passengers)))==0 for k in D for i in NP)
+        model.addConstrs((quicksum(x[k,i,j] for k in D for j in N_k if j!=i))-z[i]==0 for i in NP)
 
-model.addConstrs((quicksum(x[k,i,j] for j in N_k if j!=i) - quicksum(x[k,nr_passengers+i,j] for j in ND + driver_destination_nodes if j!=(i+nr_passengers)))==0 for k in D for i in NP)
-model.update()
-model.addConstrs((quicksum(x[k,i,j] for k in D for j in N_k if j!=i))-z[i]==0 for i in NP)
-model.update()
+        #ny constraint 1
+        model.addConstrs((quicksum(x[k,i,j] for k in D for i in N_k if j!=i)) <= 1 for j in N_k)
+        #ny constraint 2
+        model.addConstr((quicksum(x[k,i,j] for k in D for i in N_k for j in o_k.values() if j!=i)) == 0)
+        #ny constraint 3
+        model.addConstr((quicksum(x[k,i,j] for k in D for i in d_k.values() for j in N_k if j!=i)) == 0)
 
-#ny constraint 1
-model.addConstrs((quicksum(x[k,i,j] for k in D for i in N_k if j!=i)) <= 1 for j in N_k)
-model.update()
-#ny constraint 2
-model.addConstr((quicksum(x[k,i,j] for k in D for i in N_k for j in o_k.values() if j!=i)) == 0)
-#ny constraint 3
-model.addConstr((quicksum(x[k,i,j] for k in D for i in d_k.values() for j in N_k if j!=i)) == 0)
+        '''Precedence constraint'''
+        model.addConstrs(t[k,i] + T_ij[i, nr_passengers+i] - t[k, nr_passengers+i] <= 0 for k in D for i in NP)
 
-'''Precedence constraint'''
-model.addConstrs(t[k,i] + T_ij[i, nr_passengers+i] - t[k, nr_passengers+i] <= 0 for k in D for i in NP)
-model.update()
+        '''Time constraint'''
+        model.addConstrs(t[(k,i)]+T_ij[(i,j)] - t[(k,j)] - M*(1-x[k,i,j]) <= 0 for k in D for (i, j) in A_k)
+        model.addConstrs(A_k1[nr_passengers+i]<=t[k,nr_passengers+i] for k in D for i in NP)
+        model.addConstrs(t[k,nr_passengers+i]<=A_k2[nr_passengers+i] for k in D for i in NP)
+        model.addConstrs(A_k1[k1]<=t[k, k1] for k in D for k1 in d_k.values())
+        model.addConstrs(t[k, k1]<=A_k2[k1] for k in D for k1 in d_k.values())
+        model.addConstrs(t[k,nr_passengers+i] - t[k,i] <= T_k[i] for k in D for i in NP)
+        model.addConstrs(t[k,k1] - t[k, k2] <= T_k[k] for k in D for k1 in d_k.values() for k2 in o_k.values())
 
-'''Time constraint'''
-model.addConstrs(t[(k,i)]+T_ij[(i,j)] - t[(k,j)] - M*(1-x[k,i,j]) <= 0 for k in D for (i, j) in A_k)
-model.update()
+        #ny timewindow constraint:
 
-model.addConstrs(A_k1[nr_passengers+i]<=t[k,nr_passengers+i] for k in D for i in NP)
-model.update()
-model.addConstrs(t[k,nr_passengers+i]<=A_k2[nr_passengers+i] for k in D for i in NP)
-model.update()
+        model.addConstrs(x[k,i,j]*A_k1[j]<=(t[k,i]+T_ij[i,j]) * x[k,i,j] for k in D for i in NP for j in ND if i!=j)
+        model.addConstrs(x[k,i,j]*A_k2[j]>=(t[k,i]+T_ij[i,j]) * x[k,i,j] for k in D for i in NP for j in ND if i!=j)
+        #model.addConstrs(A_k1[k1]<=(t[k, k1]+T_ij[] for k in D for k1 in d_k.values())
+        #model.addConstrs(t[k, k1]<=A_k2[k1] for k in D for k1 in d_k.values())
 
-model.addConstrs(A_k1[k1]<=t[k, k1] for k in D for k1 in d_k.values())
-model.update()
-model.addConstrs(t[k, k1]<=A_k2[k1] for k in D for k1 in d_k.values())
-model.update()
+        '''Capacity constraint'''
+        model.addConstrs(quicksum(x[k,i,j] for i in NP for j in N_k if j!=i) <= Q_k[k] for k in D)
+        model.update()
 
-
-model.addConstrs(t[k,nr_passengers+i] - t[k,i] <= T_k[i] for k in D for i in NP)
-model.update()
-model.addConstrs(t[k,k1] - t[k, k2] <= T_k[k] for k in D for k1 in d_k.values() for k2 in o_k.values())
-model.update()
-
-#ny timewindow constraint:
-
-model.addConstrs(x[k,i,j]*A_k1[j]<=(t[k,i]+T_ij[i,j]) * x[k,i,j] for k in D for i in NP for j in ND if i!=j)
-model.update()
-model.addConstrs(x[k,i,j]*A_k2[j]>=(t[k,i]+T_ij[i,j]) * x[k,i,j] for k in D for i in NP for j in ND if i!=j)
-model.update()
-
-#model.addConstrs(A_k1[k1]<=(t[k, k1]+T_ij[] for k in D for k1 in d_k.values())
-#model.update()
-#model.addConstrs(t[k, k1]<=A_k2[k1] for k in D for k1 in d_k.values())
-#model.update()
-
-'''Capacity constraint'''
-model.addConstrs(quicksum(x[k,i,j] for i in NP for j in N_k if j!=i) <= Q_k[k] for k in D)
-model.update()
-
-
+"""Optimize"""
 model.Params.TimeLimit=30
+add_constraints()
 model.optimize()
 
 obj = model.getObjective()
-
 for i in model.getVars():
         print(i, i.x)
 
@@ -163,26 +142,28 @@ model.write('model.MPS')
 model.write('model.lp')
 model.write('model.ilp')"""
 
-active_arcs=[a for a in A_k if x[0, a[0], a[1]].x >0.99]
 
-arc_sum=0
-for i,j in active_arcs:
-        plt.plot([xc[i], xc[j]], [yc[i],yc[j]], c='g', zorder=0)
+"""Visualization"""
+def visualize():
+        active_arcs=[a for a in A_k if x[0, a[0], a[1]].x >0.99]
+        arc_sum=0
+        for i,j in active_arcs:
+                plt.plot([xc[i], xc[j]], [yc[i],yc[j]], c='g', zorder=0)
 
-for i in range(len(active_arcs)):
-        arc_sum += T_ij[active_arcs[i]]
+        for i in range(len(active_arcs)):
+                arc_sum += T_ij[active_arcs[i]]
 
-plt.plot(xc[0], yc[0], c='r', marker='s')
-plt.plot(xc[-1],yc[-1], c='r', marker = 's')
-plt.plot(xc[-nr_drivers],yc[-nr_drivers], c='r', marker = 's')
-plt.scatter(xc[1:len(xc)-nr_drivers], yc[1:len(yc)-nr_drivers], c='b')
+        plt.plot(xc[0], yc[0], c='r', marker='s')
+        plt.plot(xc[-1],yc[-1], c='r', marker = 's')
+        plt.plot(xc[-nr_drivers],yc[-nr_drivers], c='r', marker = 's')
+        plt.scatter(xc[1:len(xc)-nr_drivers], yc[1:len(yc)-nr_drivers], c='b')
+        plt.show()
+        print(active_arcs)
+        print(arc_sum)
+
+visualize()
 
 
 
-plt.show()
-print(active_arcs)
-print(arc_sum)
-
-print(A_k1[7])
 
 

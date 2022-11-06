@@ -52,8 +52,8 @@ T_k = {i: 10000 for i in range(nr_drivers+nr_passengers)}
 T_ij = {(i,j): np.hypot(xc[i]-xc[j], yc[i] - yc[j]) for i,j in A_k}
 print(T_ij)
 Q_k = {i: 4 for i in range(nr_drivers)}
-A_k1 = {4:0, 5:10, 6: 20, 7: 100}
-A_k2 = {4:100, 5:100, 6: 200, 7: 1000}
+A_k1 = {4:0, 5:10, 6: 20, 7: 1000}
+A_k2 = {4:100, 5:100, 6: 200, 7: 1100}
 M = 1000
 
 #start time parameter

@@ -31,24 +31,35 @@ def add_coordinates():
 add_coordinates()
 
 '''Sets'''
+
 D = [i for i in range(nr_drivers)]
-N=[i for i in range(nr_passengers*2+nr_drivers*2)]
+N = [i for i in range(nr_passengers*2+nr_drivers*2)]
 NP = N[int(len(D)):int(len(N)/2)]
-#NPK =
 ND = N[int(len(N)/2):-int(len(D))]
-#NDK =
+
+
+NPK = {}
+NDK = {}
+AK = {}
+
+#ny
+A = [(i, j) for i in N for j in N if i!=j]
+
+#gammel
 N_k = N
 A_k = [(i, j) for i in N_k for j in N_k if i!=j]
+
 
 '''Parameters'''
 o_k = {}
 d_k = {}
 T_k = {}
-T_ij = {(i,j): np.hypot(xc[i]-xc[j], yc[i] - yc[j]) for i,j in A_k}
+T_ij = {(i,j): np.hypot(xc[i]-xc[j], yc[i] - yc[j]) for i,j in A}
 Q_k = {}
 A_k1 = {}
 A_k2 = {}
 M = 1200
+
 def add_parameters():
         """Add parameters"""
         for drivers in drivers_json:
@@ -63,6 +74,66 @@ def add_parameters():
                 A_k1[passengers_json[passengers]['id'] + nr_passengers] = passengers_json[passengers]['lower_tw']
                 A_k2[passengers_json[passengers]['id'] + nr_passengers] = passengers_json[passengers]['upper_tw']
 add_parameters()
+
+"""Generate NK, NPK, NDK, AK"""
+
+def generate_NK():
+        NK = {}
+        for drivers in drivers_json:
+                nodes = []
+                for paths in T_ij:
+                        if paths[0] == drivers_json[drivers]['id']:
+                                """origin og destination noden for driver. Hvis disse to ikke er i listen nodes,
+                                 og hvis driver ikke rekker å komme seg til destination innen gitt timewindow"""
+                                if paths[0] not in nodes and ((paths[0] + nr_passengers * 2 + nr_drivers) not in nodes) \
+                                        and T_ij[(paths[0],paths[0] + nr_passengers * 2 + nr_drivers)] < A_k2[drivers_json[drivers]['id'] + nr_passengers * 2 + nr_drivers]:
+                                        nodes.append(paths[0])
+                                        nodes.append(paths[0] + nr_passengers * 2 + nr_drivers)
+                                """pick up and delivery noder for passengers. Hvis pick up noden ikke er i listen, 
+                                og den tilhørende delivery noden ikke er innenfor den korteste veien"""
+                                if paths[1] not in nodes and ((paths[1] + nr_passengers) in ND) and (paths[1] + nr_passengers < len(N)-1) \
+                                        and (T_ij[paths] < A_k2[paths[1] + nr_passengers]):
+                                        nodes.append(paths[1])
+                                if paths[1] not in nodes and paths[1] in ND and (T_ij[paths] < A_k2[paths[1]]):
+                                        nodes.append(paths[1])
+                                if drivers_json[drivers]['max_ride_time'] < T_ij[paths] and paths[1] in ND and paths[1] in nodes:
+                                        nodes.remove(paths[1])
+                                        nodes.remove(paths[1] - nr_passengers)
+                nodes.sort()
+                NK[drivers_json[drivers]['id']] = nodes
+        return NK
+
+NK = generate_NK()
+
+def generate_NPK():
+        NPK={}
+
+        for drivers in NK:
+                nodes = []
+                for node in NK[drivers]:
+                        if node in NP:
+                                nodes.append(node)
+                NPK[drivers]=nodes
+        return NPK
+
+generate_NPK()
+
+def generate_NDK():
+        NDK={}
+        for drivers in NK:
+                nodes = []
+                for node in NK[drivers]:
+                        if node in ND:
+                                nodes.append(node)
+                NDK[drivers]=nodes
+        print(NDK)
+        return NDK
+generate_NDK()
+
+AAA_k = {k: [(i, j) for i in generate_NK()[k] for j in generate_NK()[k] if i!=j] for k in generate_NK()}
+
+
+
 
 """Helper functions"""
 driver_destination_nodes=[]

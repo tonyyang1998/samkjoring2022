@@ -12,13 +12,14 @@
     },
   "D2": {
     "id": 1,
-    "origin_xc": 8,
-    "origin_yc": 4,
-    "destination_xc": 48,
-    "destination_yc": 14,
+    "origin_xc": 10,
+    "origin_yc": 14,
+    "destination_xc": 46,
+    "destination_yc": 20,
     "lower_tw": 1000,
     "upper_tw": 1200,
     "max_ride_time": 50,
     "max_capacity": 4
     }
+
 }

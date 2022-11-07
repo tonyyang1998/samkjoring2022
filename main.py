@@ -32,7 +32,7 @@ A_k = [(i, j) for i in N_k for j in N_k if i!=j]
 #parameters
 o_k = {0:0}
 d_k = {0:7}
-T_k = {i: 10000 for i in range(nr_drivers+nr_passengers)}
+T_k = {i: 70 for i in range(nr_drivers+nr_passengers)}
 
 
 """T_ij = {(0, 1): 6, (0, 2): 8, (0, 3): 12, (0, 4): 100, (0, 5): 100, (0, 6): 100, (0, 7): 100,
@@ -49,8 +49,8 @@ T_ij = {(i,j): np.hypot(xc[i]-xc[j], yc[i] - yc[j]) for i,j in A_k}
 
 Q_k = {i: 4 for i in range(nr_drivers)}
 
-A_k1 = {4:0, 5:10, 6: 20, 7: 100}
-A_k2 = {4:100, 5:100, 6: 200, 7: 1000}
+A_k1 = {4:0, 5:10, 6: 10, 7: 10}
+A_k2 = {4:50, 5:60, 6: 70, 7: 90}
 M = 1000
 
 
@@ -123,9 +123,9 @@ model.update()
 
 #ny timewindow constraint:
 
-model.addConstrs(x[k,i,j]*A_k1[j]<=(t[k,i]+T_ij[i,j]) * x[k,i,j] for k in D for i in NP for j in ND if i!=j)
+model.addConstrs(x[k,i,j]*A_k1[j]<=(t[k,i]+T_ij[i,j]) * x[k,i,j] for k in D for i in N_k for j in ND if i!=j)
 model.update()
-model.addConstrs(x[k,i,j]*A_k2[j]>=(t[k,i]+T_ij[i,j]) * x[k,i,j] for k in D for i in NP for j in ND if i!=j)
+model.addConstrs(x[k,i,j]*A_k2[j]>=(t[k,i]+T_ij[i,j]) * x[k,i,j] for k in D for i in N_k for j in ND if i!=j)
 model.update()
 
 #model.addConstrs(A_k1[k1]<=(t[k, k1]+T_ij[] for k in D for k1 in d_k.values())

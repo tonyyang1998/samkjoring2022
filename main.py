@@ -43,6 +43,7 @@ o_k = {}
 d_k = {}
 T_k = {}
 T_ij = {(i,j): np.hypot(xc[i]-xc[j], yc[i] - yc[j]) for i,j in A}
+
 Q_k = {}
 A_k1 = {}
 A_k2 = {}
@@ -63,38 +64,52 @@ def add_parameters():
                 A_k2[passengers_json[passengers]['id'] + nr_passengers] = passengers_json[passengers]['upper_tw']
 add_parameters()
 
+print(T_k)
 
-def preprocess_nodes_NK():
-        """
-        :return: {k: [nodes]} - set of preprocessed feasible nodes for driver k to visit
-        """
+driver_origin_nodes = {k: o_k[k] for k in D}
+driver_destination_nodes = {k: d_k[k] for k in D}
+
+def check_time_window_between_arc(i, j):
+        return T_ij[(i, j)] < A_k2[j]
+
+def check_max_ride_time_between_arc(i, j):
+        return T_k[i] < T_ij[(i,j)]
+
+def process_NK():
+        '''Removes nodes where:
+         1) the quickest path from driver origin node i to delivery node or destination node j is not within j's timewindow
+         2) the quickest path from any node i to delivery node j is not within j's timewindow
+         3) the quickest path from driver origin node i to delivery node or destination node j is not within the maximum ridetime for driver origin node i
+
+        :return: {k: [nodes]} - returns set of feasible nodes driver k can travel to and excludes other driver's origin and destination nodes
+        '''
         NK = {}
-        for drivers in drivers_json:
-                nodes = []
-                for paths in T_ij:
-                        if paths[0] == drivers_json[drivers]['id']:
-                                """origin og destination noden for driver. Hvis disse to ikke er i listen nodes,
-                                 og hvis driver ikke rekker å komme seg til destination innen gitt timewindow"""
-                                if paths[0] not in nodes and ((paths[0] + nr_passengers * 2 + nr_drivers) not in nodes) \
-                                        and T_ij[(paths[0],paths[0] + nr_passengers * 2 + nr_drivers)] < A_k2[drivers_json[drivers]['id'] + nr_passengers * 2 + nr_drivers]:
-                                        nodes.append(paths[0])
-                                        nodes.append(paths[0] + nr_passengers * 2 + nr_drivers)
-                                """pick up and delivery noder for passengers. Hvis pick up noden ikke er i listen, 
-                                og den tilhørende delivery noden ikke er innenfor den korteste veien"""
-                                if paths[1] not in nodes and ((paths[1] + nr_passengers) in ND) and (paths[1] + nr_passengers < len(N)-1) \
-                                        and (T_ij[paths] < A_k2[paths[1] + nr_passengers]):
-                                        nodes.append(paths[1])
-                                if paths[1] not in nodes and paths[1] in ND and (T_ij[paths] < A_k2[paths[1]]):
-                                        nodes.append(paths[1])
-                                """If the time to travel directly arc from a driver node to """
-                                if drivers_json[drivers]['max_ride_time'] < T_ij[paths] and paths[1] in ND and paths[1] in nodes:
-                                        nodes.remove(paths[1])
-                                        nodes.remove(paths[1] - nr_passengers)
-                nodes.sort()
-                NK[drivers_json[drivers]['id']] = nodes
+        for driver in D:
+                resulting_nodes = []
+                for arc in T_ij:
+                        i = arc[0]
+                        j = arc[1]
+                        if i not in resulting_nodes:
+                                resulting_nodes.append(i)
+                        if j not in resulting_nodes:
+                                resulting_nodes.append(j)
+                        if i == driver and j in ND + [driver_destination_nodes[driver]] and not check_time_window_between_arc(i, j):
+                                        resulting_nodes.remove(j)
+                        if i != driver and j in ND and not check_time_window_between_arc(i, j):
+                                        resulting_nodes.remove(j)
+                        if i == driver and j in ND + [driver_destination_nodes[driver]] and not check_max_ride_time_between_arc(i, j):
+                                        resulting_nodes.remove(j)
+                resulting_nodes.sort()
+                NK[driver] = resulting_nodes
+                for node in NK[driver]:
+                        if node != driver and node in list(driver_origin_nodes.values()):
+                                resulting_nodes.remove(node)
+                        if node != driver_destination_nodes[driver] and node in list(driver_destination_nodes.values()):
+                                resulting_nodes.remove(node)
+                NK[driver] = resulting_nodes
         return NK
+NK = process_NK()
 
-NK = preprocess_nodes_NK()
 
 def generate_NPK(NK):
         """
@@ -128,8 +143,7 @@ NPK = generate_NPK(NK)
 NDK = generate_NDK(NK)
 
 """Helper functions"""
-driver_origin_nodes = {k: o_k[k] for k in D}
-driver_destination_nodes = {k: d_k[k] for k in D}
+
 
 def check_origin_node(node):
         """

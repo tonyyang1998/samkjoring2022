@@ -40,6 +40,9 @@ NP = N[int(len(D)):int(len(N)/2)]
 ND = N[int(len(N)/2):-int(len(D))]
 A = [(i, j) for i in N for j in N if i!=j]
 
+delivery_and_pickup_node_pairs = {ND[i]: NP[i] for i in range(len(ND))}
+pickup_and_delivery_node_pairs = {NP[i]: ND[i] for i in range(len(ND))}
+
 '''Parameters'''
 o_k = {}
 d_k = {}
@@ -89,9 +92,9 @@ def check_max_ride_time_between_arc(i, j):
 
 def process_NK():
         '''Removes nodes where:
-         1) the quickest path between (i, j) = (driver origin node, passenger delivery or driver destination node) is not within j's timewindow
+         1) the quickest path between (i, j) = (driver origin node, passenger delivery node) is not within j's timewindow
          2) the quickest path between (i, j) = (any node, passenger delivery node) is not within j's timewindow
-         3) the quickest path between (i, j) = (driver origin node, passenger delivery or driver destination node) is not within the maximum ridetime from driver origin node i to j
+         3) the quickest path between (i, j) = (driver origin node, passenger delivery) is not within the maximum ridetime from driver origin node i to j
         :return: {k: [nodes]} - returns set of feasible nodes driver k can travel to and excludes other driver's origin and destination nodes
         '''
         NK = {}
@@ -104,11 +107,16 @@ def process_NK():
                                 resulting_nodes.append(i)
                         if j not in resulting_nodes:
                                 resulting_nodes.append(j)
-                        if i == driver and j in ND + [driver_destination_nodes[driver]] and not check_time_window_between_arc(i, j):
+                        if i == driver and j in ND and not check_time_window_between_arc(i, j):
+                                        pickup_node = delivery_and_pickup_node_pairs[j]
+                                        resulting_nodes.remove(pickup_node)
                                         resulting_nodes.remove(j)
-                        if i != driver and j in ND and not check_time_window_between_arc(i, j):
+                        if i in NP and j in ND and pickup_and_delivery_node_pairs[i] == j and not check_time_window_between_arc(i, j):
+                                        resulting_nodes.remove(i)
                                         resulting_nodes.remove(j)
-                        if i == driver and j in ND + [driver_destination_nodes[driver]] and not check_max_ride_time_between_arc(i, j):
+                        if i == driver and j in ND and not check_max_ride_time_between_arc(i, j):
+                                        pickup_node = delivery_and_pickup_node_pairs[j]
+                                        resulting_nodes.remove(pickup_node)
                                         resulting_nodes.remove(j)
                 resulting_nodes.sort()
                 NK[driver] = resulting_nodes
@@ -176,23 +184,38 @@ def from_delivery_to_pickup_arc(arc):
         return arc[0] in ND and arc[1] in NP
 
 def process_AK(NK):
-        """ Remove all arcs (i, j) where j are origin nodes, i are destination nodes, and i j in (i, j) where i is a pick up node and j is a delivery node
+        """ Removes:
+        1) all arcs (i, j) where j are origin nodes, i are destination nodes, and i j in (i, j) where i is a pick up node and j is a delivery node
+        2) all arcs going in to j, where j is a delivery node and if the ride time for a passenger to travel from its pick up node to j is higher than the maximum ride time for passenger.
+        If that passenger cannot get to its delivery node within that persons max ride time, then there should be no arcs going into that persons delivery node
         :param NK: {k, [nodes]} - set of preprocessed feasible nodes for driver k to visit
         :return: {k, [arcs]} - returns a set of feasible arcs (i, j) for driver k to travel with.
         """
-        result={}
+        result = {}
         AK = {k: [(i, j) for i in NK[k] for j in NK[k] if i != j] for k in NK}
         for driver in AK:
                 arcs = []
                 for arc in AK[driver]:
-                        if not check_driver_origin_node(arc[1]):
-                                if not check_driver_destination_node(arc[0]):
+                        i = arc[0]
+                        j = arc[1]
+                        if not check_driver_origin_node(j):
+                                if not check_driver_destination_node(i):
                                         if not from_delivery_to_pickup_arc(arc):
                                                 arcs.append(arc)
-                result[driver]=arcs
-        return result
 
-#def process_AK1(AK):
+                for arc in AK[driver]:
+                        i = arc[0]
+                        j = arc[1]
+                        """removes all arcs going into j, if a passenger that has j as the delivery node where traveling from that guys pick up node to j exceeds the max time a passenger is willing to ride"""
+                        if i in NP and j in ND and pickup_and_delivery_node_pairs[i] == j and T_k[i] < T_ij[(i, j)]:
+                                arcs.remove(arc)
+                                for i in D + NP:
+                                        if (i, j) in arcs:
+                                                arcs.remove((i,j))
+                        # må remove alle arcs som går inn til j da
+                result[driver] = arcs
+
+        return result
 
 AK = process_AK(NK)
 

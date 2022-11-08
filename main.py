@@ -181,7 +181,7 @@ def generate_AK(NK):
                 result[driver]=arcs
         return result
 
-def process_AK(AK):
+#def process_AK(AK):
 
 
 AK = generate_AK(NK)

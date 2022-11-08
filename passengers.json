@@ -6,8 +6,8 @@
     "origin_yc": 18,
     "destination_xc": 30,
     "destination_yc": 20,
-    "lower_tw": 1100,
-    "upper_tw": 1150,
+    "lower_tw": 0,
+    "upper_tw": 50,
     "max_ride_time": 50
 
   },
@@ -17,8 +17,8 @@
     "origin_yc": 8,
     "destination_xc": 32,
     "destination_yc": 12,
-    "lower_tw": 1100,
-    "upper_tw": 1120,
+    "lower_tw": 10,
+    "upper_tw": 60,
     "max_ride_time": 50
   },
   "P3": {
@@ -27,8 +27,9 @@
     "origin_yc": 16,
     "destination_xc": 40,
     "destination_yc": 10,
-    "lower_tw": 1100,
-    "upper_tw": 1125,
+    "lower_tw": 20,
+    "upper_tw": 70,
     "max_ride_time": 50
+
   }
 }

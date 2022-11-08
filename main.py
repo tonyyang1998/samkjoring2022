@@ -88,7 +88,6 @@ def process_NK():
          1) the quickest path from driver origin node i to delivery node or destination node j is not within j's timewindow
          2) the quickest path from any node i to delivery node j is not within j's timewindow
          3) the quickest path from driver origin node i to delivery node or destination node j is not within the maximum ridetime for driver origin node i
-
         :return: {k: [nodes]} - returns set of feasible nodes driver k can travel to and excludes other driver's origin and destination nodes
         '''
         NK = {}
@@ -173,7 +172,7 @@ def from_delivery_to_pickup_arc(arc):
         return arc[0] in ND and arc[1] in NP
 
 def generate_AK(NK):
-        """ Remove all arcs (i, j) where j are origin nodes, i are destination nodes, and i j in (i, j) where i are pick up nodes and j are delivery nodes
+        """ Remove all arcs (i, j) where j are origin nodes, i are destination nodes, and i j in (i, j) where i is a pick up node and j is a delivery nodes
         :param NK: {k, [nodes]} - set of preprocessed feasible nodes for driver k to visit
         :return: {k, [arcs]} - returns a set of feasible arcs (i, j) for driver k to travel with.
         """

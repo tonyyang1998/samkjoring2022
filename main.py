@@ -64,15 +64,23 @@ def add_parameters():
                 A_k2[passengers_json[passengers]['id'] + nr_passengers] = passengers_json[passengers]['upper_tw']
 add_parameters()
 
-print(T_k)
-
 driver_origin_nodes = {k: o_k[k] for k in D}
 driver_destination_nodes = {k: d_k[k] for k in D}
 
 def check_time_window_between_arc(i, j):
+        """ Checks if the time of traveling between driver origin or pick up node i and delivery node j is within the time window of node j
+        :param i: Integer - origin or pick up nodes
+        :param j: Integer - delivery nodes
+        :return: Boolean
+        """
         return T_ij[(i, j)] < A_k2[j]
 
 def check_max_ride_time_between_arc(i, j):
+        """ Checks if the time of traveling between driver origin node i and delivery or destination node j is within the max travel time from driver origin node i
+        :param i: Integer - origin or pick up nodes
+        :param j: Integer - delivery nodes
+        :return: Boolean
+        """
         return T_k[i] < T_ij[(i,j)]
 
 def process_NK():

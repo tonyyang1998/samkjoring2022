@@ -72,7 +72,7 @@ driver_origin_nodes = {k: o_k[k] for k in D}
 driver_destination_nodes = {k: d_k[k] for k in D}
 
 def check_time_window_between_arc(i, j):
-        """ Checks if the time of traveling between driver origin or pick up node i and delivery node j is within the time window of node j
+        """ Checks if the time of traveling between (i, j) = (driver origin or passenger pick up nodes, passenger delivery node) is within the time window of j
         :param i: Integer - origin or pick up nodes
         :param j: Integer - delivery nodes
         :return: Boolean
@@ -80,7 +80,7 @@ def check_time_window_between_arc(i, j):
         return T_ij[(i, j)] < A_k2[j]
 
 def check_max_ride_time_between_arc(i, j):
-        """ Checks if the time of traveling between driver origin node i and delivery or destination node j is within the max travel time from driver origin node i
+        """ Checks if the time of traveling between (i, j) = (driver origin node, passenger delivery or driver destination node) is within the max travel time to j
         :param i: Integer - origin or pick up nodes
         :param j: Integer - delivery nodes
         :return: Boolean
@@ -89,9 +89,9 @@ def check_max_ride_time_between_arc(i, j):
 
 def process_NK():
         '''Removes nodes where:
-         1) the quickest path from driver origin node i to delivery node or destination node j is not within j's timewindow
-         2) the quickest path from any node i to delivery node j is not within j's timewindow
-         3) the quickest path from driver origin node i to delivery node or destination node j is not within the maximum ridetime for driver origin node i
+         1) the quickest path between (i, j) = (driver origin node, passenger delivery or driver destination node) is not within j's timewindow
+         2) the quickest path between (i, j) = (any node, passenger delivery node) is not within j's timewindow
+         3) the quickest path between (i, j) = (driver origin node, passenger delivery or driver destination node) is not within the maximum ridetime from driver origin node i to j
         :return: {k: [nodes]} - returns set of feasible nodes driver k can travel to and excludes other driver's origin and destination nodes
         '''
         NK = {}
@@ -169,14 +169,14 @@ def check_driver_destination_node(node):
         return node in driver_destination_nodes.values()
 
 def from_delivery_to_pickup_arc(arc):
-        """
+        """  Checks if the arc (i, j) is from a passenger delivery node to a passenger pick up node
         :param arc: (i, j) - arc from node i to node j
-        :return: Boolean - returns True if i is a delivery node AND j is a pick up node in arc (i, j)
+        :return: Boolean - returns True if i is a delivery node AND j is a pick up node in arc (i, j), False otherwise
         """
         return arc[0] in ND and arc[1] in NP
 
 def process_AK(NK):
-        """ Remove all arcs (i, j) where j are origin nodes, i are destination nodes, and i j in (i, j) where i is a pick up node and j is a delivery nodes
+        """ Remove all arcs (i, j) where j are origin nodes, i are destination nodes, and i j in (i, j) where i is a pick up node and j is a delivery node
         :param NK: {k, [nodes]} - set of preprocessed feasible nodes for driver k to visit
         :return: {k, [arcs]} - returns a set of feasible arcs (i, j) for driver k to travel with.
         """
@@ -311,12 +311,11 @@ model.write('model.MPS')
 model.write('model.lp')
 model.write('model.ilp')"""
 
-
 """Visualization"""
 def visualize():
 
         for k in D:
-                active_arcs=[a for a in AK[k] if x[k, a[0], a[1]].x >0.99]
+                active_arcs=[a for a in AK[k] if x[k, a[0], a[1]].x > 0.99]
                 arc_sum=0
                 for i,j in active_arcs:
                         plt.plot([xc[i], xc[j]], [yc[i],yc[j]], c='g', zorder=0)
@@ -334,8 +333,4 @@ def visualize():
         print(arc_sum)
 
 visualize()
-
-
-
-
 

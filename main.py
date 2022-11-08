@@ -142,8 +142,6 @@ def generate_NDK(NK):
 NPK = generate_NPK(NK)
 NDK = generate_NDK(NK)
 
-"""Helper functions"""
-
 
 def check_origin_node(node):
         """
@@ -182,6 +180,9 @@ def generate_AK(NK):
                                                 arcs.append(arc)
                 result[driver]=arcs
         return result
+
+def process_AK(AK):
+
 
 AK = generate_AK(NK)
 

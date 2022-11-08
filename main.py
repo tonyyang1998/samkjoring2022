@@ -154,17 +154,17 @@ NPK = generate_NPK(NK)
 NDK = generate_NDK(NK)
 
 
-def check_origin_node(node):
-        """
+def check_driver_origin_node(node):
+        """ Checks if node is a driver origin node
         :param node: Integer - a node
-        :return: Boolean - True if node is a origin node, False otherwise
+        :return: Boolean - True if node is a driver origin node, False otherwise
         """
         return node in driver_origin_nodes.values()
 
-def check_destination_node(node):
-        """
+def check_driver_destination_node(node):
+        """ Checks if node is a driver destination node
         :param node: Integer - a node
-        :return: Boolean - True if node is a destination node, False otherwise
+        :return: Boolean - True if node is a driver destination node, False otherwise
         """
         return node in driver_destination_nodes.values()
 
@@ -185,8 +185,8 @@ def process_AK(NK):
         for driver in AK:
                 arcs = []
                 for arc in AK[driver]:
-                        if not check_origin_node(arc[1]):
-                                if not check_destination_node(arc[0]):
+                        if not check_driver_origin_node(arc[1]):
+                                if not check_driver_destination_node(arc[0]):
                                         if not from_delivery_to_pickup_arc(arc):
                                                 arcs.append(arc)
                 result[driver]=arcs

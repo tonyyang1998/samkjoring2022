@@ -187,7 +187,8 @@ def process_AK(NK):
         """ Removes:
         1) all arcs (i, j) where j are origin nodes, i are destination nodes, and i j in (i, j) where i is a pick up node and j is a delivery node
         2) all arcs going in to j, where j is a delivery node and if the ride time for a passenger to travel from its pick up node to j is higher than the maximum ride time for passenger.
-        If that passenger cannot get to its delivery node within that persons max ride time, then there should be no arcs going into that persons delivery node
+                If a passenger cannot get to its delivery node within that persons max ride time from their pick up node using the shortest arc,
+                then there should be no arcs going into that persons delivery node because we would never be able to deliver that guy
         :param NK: {k, [nodes]} - set of preprocessed feasible nodes for driver k to visit
         :return: {k, [arcs]} - returns a set of feasible arcs (i, j) for driver k to travel with.
         """

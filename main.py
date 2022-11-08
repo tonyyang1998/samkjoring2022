@@ -15,7 +15,9 @@ xc = []
 yc = []
 
 def add_coordinates():
-        """Add coordinates"""
+        """ Create coordinates (x, y) for the origins and destinations of drivers and passengers
+        :return:
+        """
         for drivers in drivers_json:
                 xc.append(drivers_json[drivers]['origin_xc'])
                 yc.append(drivers_json[drivers]['origin_yc'])
@@ -50,7 +52,9 @@ A_k2 = {}
 M = 1200
 
 def add_parameters():
-        """Add parameters"""
+        """ Use driver and passenger information from json. files to add Parameters
+        :return:
+        """
         for drivers in drivers_json:
                 o_k[drivers_json[drivers]['id']] = drivers_json[drivers]['id']
                 d_k[drivers_json[drivers]['id']] = drivers_json[drivers]['id'] + nr_passengers * 2 + nr_drivers

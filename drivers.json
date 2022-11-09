@@ -20,5 +20,16 @@
     "upper_tw": 1200,
     "max_ride_time": 150,
     "max_capacity": 4
+    },
+   "D3": {
+    "id": 2,
+    "origin_xc": 8,
+    "origin_yc": 20,
+    "destination_xc": 46,
+    "destination_yc": 22,
+    "lower_tw": 1000,
+    "upper_tw": 1200,
+    "max_ride_time": 38.1,
+    "max_capacity": 4
     }
 }

@@ -343,7 +343,7 @@ def add_constraints():
 
         """ADDED"""
         model.addConstr(quicksum(z[i] for i in NP) <= nr_passengers)
-        model.addConstr(quicksum(z[i] for i in NP) >= nr_passengers/4)
+        model.addConstr(quicksum(z[i] for i in NP) >= nr_passengers)
         model.update()
 
 """Optimize"""

@@ -214,7 +214,7 @@ def process_AK(NK):
                                                 arcs.remove((i,j))
                                 # legge til å fjerne alle kanter som går inn til den pick up noden også
 
-                """"""
+                """Removes all arcs from pick up nodes that goes directly to a driver destination node"""
                 for arc in AK[driver]:
                         i = arc[0]
                         j = arc[1]
@@ -343,7 +343,7 @@ def add_constraints():
 
         """ADDED"""
         model.addConstr(quicksum(z[i] for i in NP) <= nr_passengers)
-        model.addConstr(quicksum(z[i] for i in NP) >= nr_passengers)
+        model.addConstr(quicksum(z[i] for i in NP) >= nr_passengers/6)
         model.update()
 
 """Optimize"""
@@ -365,7 +365,6 @@ def visualize():
         arcs = {}
         arcsum = {}
         for k in D:
-
                 active_arcs=[a for a in AK[k] if x[k, a[0], a[1]].x > 0.99]
                 arc_sum=0
                 for i,j in active_arcs:

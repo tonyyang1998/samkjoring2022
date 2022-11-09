@@ -1,48 +1,110 @@
 import numpy as np
-import matplotlib.pyplot as plt
 from gurobipy import Model, GRB, quicksum
+import matplotlib.pyplot as plt
+import json
 
-rnd = np.random
+passengers_json = json.load(open('passengers1.json'))
+drivers_json = json.load(open('drivers1.json'))
+rnd=np.random
 rnd.seed(0)
 
-n = 20  # numbre of clients
-xc = rnd.rand(n+1)*200
-yc = rnd.rand(n+1)*100
+nr_passengers = len(passengers_json)
+nr_drivers = len(drivers_json)
+
+'''Coordinates '''
+xc = []
+yc = []
+
+def add_coordinates():
+        """Add coordinates"""
+        for drivers in drivers_json:
+                xc.append(drivers_json[drivers]['origin_xc'])
+                yc.append(drivers_json[drivers]['origin_yc'])
+        for passengers in passengers_json:
+                xc.append(passengers_json[passengers]['origin_xc'])
+                yc.append(passengers_json[passengers]['origin_yc'])
+        for passengers in passengers_json:
+                xc.append(passengers_json[passengers]['destination_xc'])
+                yc.append(passengers_json[passengers]['destination_yc'])
+        for drivers in drivers_json:
+                xc.append(drivers_json[drivers]['destination_xc'])
+                yc.append(drivers_json[drivers]['destination_yc'])
+add_coordinates()
+
+'''Sets'''
+
+D = [i for i in range(nr_drivers)]
+N = [i for i in range(nr_passengers*2+nr_drivers*2)]
+NP = N[int(len(D)):int(len(N)/2)]
+ND = N[int(len(N)/2):-int(len(D))]
 
 
-plt.plot(xc[0], yc[0], c='r', marker='s')
-plt.scatter(xc[1:], yc[1:], c='b')
+#ny
+A = [(i, j) for i in N for j in N if i!=j]
 
-N = [i for i in range(1, n+1)]
-V = [0] + N
-A = [(i, j) for i in V for j in V if i != j]
-c = {(i, j): np.hypot(xc[i]-xc[j], yc[i]-yc[j]) for i, j in A}
-Q = 20
-q = {i: rnd.randint(1, 10) for i in N}
 
-mdl = Model('CVRP')
+#gammel
+N_k = N
+A_k = [(i, j) for i in N_k for j in N_k if i!=j]
 
-x = mdl.addVars(A, vtype=GRB.BINARY)
-u = mdl.addVars(N, vtype=GRB.CONTINUOUS)
 
-mdl.modelSense = GRB.MINIMIZE
-mdl.setObjective(quicksum(x[i, j]*c[i, j] for i, j in A))
+'''Parameters'''
+o_k = {}
+d_k = {}
+T_k = {}
+T_ij = {(i,j): np.hypot(xc[i]-xc[j], yc[i] - yc[j]) for i,j in A}
+Q_k = {}
+A_k1 = {}
+A_k2 = {}
+M = 1200
 
-mdl.addConstrs(quicksum(x[i, j] for j in V if j != i) == 1 for i in N)
-mdl.addConstrs(quicksum(x[i, j] for i in V if i != j) == 1 for j in N)
-mdl.addConstrs((x[i, j] == 1) >> (u[i]+q[j] == u[j])
-               for i, j in A if i != 0 and j != 0)
-mdl.addConstrs(u[i] >= q[i] for i in N)
-mdl.addConstrs(u[i] <= Q for i in N)
 
-mdl.Params.MIPGap = 0.1
-mdl.Params.TimeLimit = 30  # seconds
-mdl.optimize()
+def add_parameters():
+    """Add parameters"""
+    for drivers in drivers_json:
+        o_k[drivers_json[drivers]['id']] = drivers_json[drivers]['id']
+        d_k[drivers_json[drivers]['id']] = drivers_json[drivers]['id'] + nr_passengers * 2 + nr_drivers
+        T_k[drivers_json[drivers]['id']] = drivers_json[drivers]['max_ride_time']
+        Q_k[drivers_json[drivers]['id']] = drivers_json[drivers]['max_capacity']
+        A_k1[drivers_json[drivers]['id'] + nr_passengers * 2 + nr_drivers] = drivers_json[drivers]['lower_tw']
+        A_k2[drivers_json[drivers]['id'] + nr_passengers * 2 + nr_drivers] = drivers_json[drivers]['upper_tw']
+    for passengers in passengers_json:
+        T_k[passengers_json[passengers]['id']] = passengers_json[passengers]['max_ride_time']
+        A_k1[passengers_json[passengers]['id'] + nr_passengers] = passengers_json[passengers]['lower_tw']
+        A_k2[passengers_json[passengers]['id'] + nr_passengers] = passengers_json[passengers]['upper_tw']
 
-active_arcs = [a for a in A if x[a].x > 0.99]
 
-for i, j in active_arcs:
-    plt.plot([xc[i], xc[j]], [yc[i], yc[j]], c='g', zorder=0)
-plt.plot(xc[0], yc[0], c='r', marker='s')
-plt.scatter(xc[1:], yc[1:], c='b')
-plt.show()
+add_parameters()
+
+print(d_k)
+
+def generate_NK():
+    NK = {}
+    for drivers in drivers_json:
+        nodes = []
+        for paths in T_ij:
+            if paths[0] == drivers_json[drivers]['id']:
+                """origin og destination noden for driver. Hvis disse to ikke er i listen nodes,
+                 og hvis driver ikke rekker å komme seg til destination innen gitt timewindow"""
+                if paths[0] not in nodes and ((paths[0] + nr_passengers * 2 + nr_drivers) not in nodes) \
+                        and T_ij[(paths[0], paths[0] + nr_passengers * 2 + nr_drivers)] < A_k2[
+                    drivers_json[drivers]['id'] + nr_passengers * 2 + nr_drivers]:
+                    nodes.append(paths[0])
+                    nodes.append(paths[0] + nr_passengers * 2 + nr_drivers)
+                """pick up and delivery noder for passengers. Hvis pick up noden ikke er i listen, 
+                og den tilhørende delivery noden ikke er innenfor den korteste veien"""
+                if paths[1] not in nodes and ((paths[1] + nr_passengers) in ND) and (
+                        paths[1] + nr_passengers < len(N) - 1) \
+                        and (T_ij[paths] < A_k2[paths[1] + nr_passengers]):
+                    nodes.append(paths[1])
+                if paths[1] not in nodes and paths[1] in ND and (T_ij[paths] < A_k2[paths[1]]):
+                    nodes.append(paths[1])
+                if drivers_json[drivers]['max_ride_time'] < T_ij[paths] and paths[1] in ND and paths[1] in nodes:
+                    nodes.remove(paths[1])
+                    nodes.remove(paths[1] - nr_passengers)
+        nodes.sort()
+        NK[drivers_json[drivers]['id']] = nodes
+    return NK
+
+
+print(generate_NK())

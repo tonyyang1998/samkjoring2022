@@ -93,8 +93,8 @@ def check_max_ride_time_between_arc(i, j):
 def process_NK():
         '''Removes nodes where:
          1) the quickest path between (i, j) = (driver origin node, passenger delivery node) is not within j's timewindow
-         2) the quickest path between (i, j) = (any node, passenger delivery node) is not within j's timewindow
-         3) the quickest path between (i, j) = (driver origin node, passenger delivery) is not within the maximum ridetime from driver origin node i to j
+         2) the quickest path between (i, j) = (passenger pick up node, passenger delivery node) is not within j's timewindow
+         3) the quickest path between (i, j) = (driver origin node, passenger delivery node) is not within the maximum ridetime from driver origin node i to j
         :return: {k: [nodes]} - returns set of feasible nodes driver k can travel to and excludes other driver's origin and destination nodes
         '''
         NK = {}
@@ -203,7 +203,6 @@ def process_AK(NK):
                                 if not check_driver_destination_node(i):
                                         if not from_delivery_to_pickup_arc(arc):
                                                 arcs.append(arc)
-
                 for arc in AK[driver]:
                         i = arc[0]
                         j = arc[1]
@@ -213,22 +212,28 @@ def process_AK(NK):
                                 for i in D + NP:
                                         if (i, j) in arcs:
                                                 arcs.remove((i,j))
-                        # må remove alle arcs som går inn til j da
+                                # legge til å fjerne alle kanter som går inn til den pick up noden også
+
+                """"""
+                for arc in AK[driver]:
+                        i = arc[0]
+                        j = arc[1]
+                        if i != driver_origin_nodes[driver] and i in NP:
+                                if j in [driver_destination_nodes[driver]]:
+                                        arcs.remove((i, j))
+                """removes all arcs that goes from origin node to a delivery node"""
+                for arc in AK[driver]:
+                        i = arc[0]
+                        j = arc[1]
+                        if i == driver_origin_nodes[driver] and j in ND:
+                                arcs.remove((i, j))
+
                 result[driver] = arcs
 
         return result
 
-AK = process_AK(NK)
 
-print("D:", D)
-print("N:", N)
-print("NP:", NP)
-print("ND:", ND)
-print("A:", A)
-print("NK:", NK)
-print("NPK:", NPK)
-print("NDK:", NDK)
-print("AK:", AK)
+AK = process_AK(NK)
 
 model=Model('RRP')
 
@@ -246,60 +251,75 @@ x, z ,t = set_variables()
 
 def set_objective():
         '''Model'''
-        #model.modelSense = GRB.MINIMIZE
-        #model.setObjective(quicksum(T_ij[i,j]*x[k,i,j] for i, j in A for k in D), GRB.MINIMIZE)
+        model.modelSense = GRB.MINIMIZE
+        model.setObjective(quicksum(T_ij[i,j]*x[k,i,j] for k in D for i in NK[k] for j in NK[k] if (i, j) in AK[k]), GRB.MINIMIZE)
         #model.setObjective(quicksum(T_ij[i,j]*x[k,i,j] for i in N for j in N for k in D if i!=j), GRB.MINIMIZE)
-        model.modelSense = GRB.MAXIMIZE
-        model.setObjective(quicksum(z[i] for i in NP))
+        #model.modelSense = GRB.MAXIMIZE
+        #model.setObjective(quicksum(z[i] for i in NP))
         model.update()
 
 set_objective()
 
+
+print(NP)
+print(ND)
+print(AK)
+
+nodes_without_destinations = {}
+for k in D:
+        liste = []
+        for i in NK[k]:
+                destinations = list(driver_destination_nodes.values())
+                if i not in destinations:
+                        liste.append(i)
+        nodes_without_destinations[k] = liste
+
+
+
 def add_constraints():
         '''Constraints'''
         '''Routing constraits'''
-        nodes_without_destinations = {}
-        for k in D:
-                liste = []
-                for i in NK[k]:
-                        destinations = list(driver_destination_nodes.values())
-                        if i not in destinations:
-                                liste.append(i)
-                nodes_without_destinations[k] = liste
 
-        model.addConstrs(quicksum(x[k,i,j] for j in NPK[k] + [driver_destination_nodes[k]]) == 1 for k in D for i in [driver_origin_nodes[k]])
+        model.addConstrs(quicksum(x[k,i,j] for j in NPK[k] + [driver_destination_nodes[k]] if (i, j) in AK[k]) == 1 for k in D for i in [driver_origin_nodes[k]])
+        model.addConstrs(quicksum(x[k,i,j] for i in [driver_origin_nodes[k]] + NDK[k] if (i, j) in AK[k]) == 1 for k in D for j in [driver_destination_nodes[k]])
+
+        model.addConstrs(((quicksum(x[k, i, j] for j in NK[k] if j not in [driver_origin_nodes[k]] if (i, j) in AK[k]))
+                         == quicksum(x[k, j, i] for j in NK[k] if j not in [driver_destination_nodes[k]] if (j, i) in AK[k])) for k in D for i in NK[k] if i not in [driver_origin_nodes[k]] if i not in [driver_destination_nodes[k]] )
+
+        model.addConstrs((quicksum(x[k, i, j] for j in NK[k] if (i, j) in AK[k])) -
+                         (quicksum(x[k, nr_passengers + i, j] for j in ND + [driver_destination_nodes[k]] if (i + nr_passengers, j) in AK[k])) == 0
+                         for k in D for i in NPK[k])
 
 
-        model.addConstrs(quicksum(x[k,i,j] for i in [driver_origin_nodes[k]] + NDK[k]) == 1 for k in D for j in [driver_destination_nodes[k]])
-        model.addConstrs((quicksum(x[k,i,j] for j in NK[k] if j!=i if j not in list(driver_origin_nodes.values())) == quicksum(x[k,j,i] for j in NK[k] if j!=i if j not in list(driver_destination_nodes.values()))) for k in D for i in NK[k][1:-1])
+        model.addConstrs((quicksum(x[k, i, j] for k in D for j in NK[k] if j!=i if j not in list(driver_origin_nodes.values()) if (i, j) in AK[k])) - z[i] == 0 for i in NP)
 
-        model.addConstrs((quicksum(x[k,i,j] for j in NK[k] if j!=i if j not in list(driver_origin_nodes.values())) - quicksum(x[k,nr_passengers+i,j] for j in ND + [driver_destination_nodes[k]] if j!=(i + nr_passengers)))==0 for k in D for i in NPK[k])
-        model.addConstrs((quicksum(x[k,i,j] for k in D for j in NK[k] if j!=i if j not in list(driver_origin_nodes.values()))) - z[i]==0 for i in NP)
 
-        #ny constraint 1 (test ut å ta bort) ENDRING
-        model.addConstrs((quicksum(x[k,i,j] for k in D for i in NK[k] if j!=i if i not in list(driver_destination_nodes.values()))) <= 1 for j in NP + ND)
+        model.addConstrs((quicksum(x[k, i, j] for k in D for i in NK[k] if j!=i if i not in list(driver_destination_nodes.values()) if (i, j) in AK[k])) <= 1 for j in NP + ND)
+
 
 
         #ny constraint 2 (endre i rapporten) ENDRING
-
-        model.addConstr((quicksum(x[k,i,j] for k in D for i in N for j in driver_origin_nodes.values() if j!=i and (j not in driver_origin_nodes.values() and i not in driver_origin_nodes.values()))) == 0)
-
-        #model.addConstrs((quicksum(x[k, i, j] for k in D for i in NP + ND + list(driver_destination_nodes.values()) if i!=j)) == 0 for j in list(driver_origin_nodes.values()))
-
-
+        """old"""
+        #model.addConstr((quicksum(x[k,i,j] for k in D for i in N for j in driver_origin_nodes.values() if j!=i and (j not in driver_origin_nodes.values() and i not in driver_origin_nodes.values()))) == 0)
+        """La til arc (i, j) i AK[k] betingelse"""
+        #model.addConstr((quicksum(x[k, i, j] for k in D for i in NP + ND for j in [driver_origin_nodes[k]] if (i, j) in AK[k])) == 0)
         #ny constraint 3
-        model.addConstr((quicksum(x[k,i,j] for k in D for i in driver_destination_nodes.values() for j in N if j!=i and (j not in driver_destination_nodes.values() and i not in driver_destination_nodes.values()))) == 0)
-        #model.addConstrs((quicksum(x[k, i, j] for k in D for j in N if i!=j) == 0 for i in list(driver_destination_nodes.values())))
-        #model.addConstrs((quicksum(x[k, i, j] for k in D for j in N if i!=j if (i not in list(driver_destination_nodes.values()) and j not in list(driver_destination_nodes.values()))) == 0 for i in list(driver_destination_nodes.values())))
+        """old"""
+        #model.addConstr((quicksum(x[k,i,j] for k in D for i in driver_destination_nodes.values() for j in N if j!=i and (j not in driver_destination_nodes.values() and i not in driver_destination_nodes.values()))) == 0)
+        """La til arc (i, j) i AK[k] betingelse"""
+        #model.addConstr((quicksum(x[k, i, j] for k in D for i in [driver_destination_nodes[k]] for j in NP + ND if (i, j) in AK[k])) == 0)
+
+
+
 
 
         '''Precedence constraint'''
-        model.addConstrs(t[k,i] + T_ij[i, nr_passengers+i] - t[k, nr_passengers+i] <= 0 for k in D for i in NP)
+        model.addConstrs(t[k,i] + T_ij[i, nr_passengers+i] - t[k, nr_passengers+i] <= 0 for k in D for i in NP if (i, i + nr_passengers) in AK[k])
 
         '''Time constraint'''
-        model.addConstrs(t[(k,i)]+T_ij[(i,j)] - t[(k,j)] - M*(1-x[k,i,j]) <= 0 for k in D for (i, j) in AK[k])
-        model.addConstrs(A_k1[nr_passengers+i]<=t[k,nr_passengers+i] for k in D for i in NPK[k])
-        model.addConstrs(t[k,nr_passengers+i]<=A_k2[nr_passengers+i] for k in D for i in NPK[k])
+        model.addConstrs(t[(k,i)]+T_ij[(i,j)] - t[(k,j)] - M*(1-x[k,i,j]) <= 0 for k in D for i in NK[k] for j in NK[k] if (i, j) in AK[k])
+        model.addConstrs(A_k1[nr_passengers+i] <= t[k, nr_passengers+i] for k in D for i in NPK[k])
+        model.addConstrs(t[k,nr_passengers+i] <= A_k2[nr_passengers+i] for k in D for i in NPK[k])
 
         #ENDRET
         model.addConstrs(A_k1[k1]<=t[k, k2] for k in D for k1 in driver_destination_nodes.values() for k2 in nodes_without_destinations[k])
@@ -312,13 +332,18 @@ def add_constraints():
 
         #ny timewindow constraint:
 
-        model.addConstrs(x[k,i,j]*A_k1[j]<=(t[k,i]+T_ij[i,j]) * x[k,i,j] for k in D for i in NPK[k] for j in NDK[k] if i!=j)
-        model.addConstrs(x[k,i,j]*A_k2[j]>=(t[k,i]+T_ij[i,j]) * x[k,i,j] for k in D for i in NPK[k] for j in NDK[k] if i!=j)
+        model.addConstrs(x[k,i,j]*A_k1[j]<=(t[k,i]+T_ij[i,j]) * x[k,i,j] for k in D for i in NPK[k] for j in NDK[k] if i!=j if (i, j) in AK[k])
+        model.addConstrs(x[k,i,j]*A_k2[j]>=(t[k,i]+T_ij[i,j]) * x[k,i,j] for k in D for i in NPK[k] for j in NDK[k] if i!=j if (i, j) in AK[k])
         #model.addConstrs(A_k1[k1]<=(t[k, k1]+T_ij[] for k in D for k1 in d_k.values())
         #model.addConstrs(t[k, k1]<=A_k2[k1] for k in D for k1 in d_k.values())
 
         '''Capacity constraint'''
-        model.addConstrs(quicksum(x[k,i,j] for i in NPK[k] for j in NK[k] if j!=i if j not in list(driver_origin_nodes.values())) <= Q_k[k] for k in D)
+        model.addConstrs(quicksum(x[k,i,j] for i in NPK[k] for j in NK[k] if j!=i if j not in list(driver_origin_nodes.values()) if (i, j) in AK[k]) <= Q_k[k] for k in D)
+
+
+        """ADDED"""
+        model.addConstr(quicksum(z[i] for i in NP) <= nr_passengers)
+        model.addConstr(quicksum(z[i] for i in NP) >= nr_passengers/4)
         model.update()
 
 """Optimize"""
@@ -327,8 +352,8 @@ add_constraints()
 model.optimize()
 
 obj = model.getObjective()
-#for i in model.getVars():
- #       print(i, i.x)
+for i in model.getVars():
+        print(i, i.x)
 
 """model.computeIIS()
 model.write('model.MPS')
@@ -337,8 +362,10 @@ model.write('model.ilp')"""
 
 """Visualization"""
 def visualize():
-
+        arcs = {}
+        arcsum = {}
         for k in D:
+
                 active_arcs=[a for a in AK[k] if x[k, a[0], a[1]].x > 0.99]
                 arc_sum=0
                 for i,j in active_arcs:
@@ -346,6 +373,8 @@ def visualize():
 
                 for i in range(len(active_arcs)):
                         arc_sum += T_ij[active_arcs[i]]
+                arcs[k] = active_arcs
+                arcsum[k] = arc_sum
 
         plt.plot(xc[0], yc[0], c='r', marker='s')
         plt.plot(xc[1], yc[1], c='r', marker='s')
@@ -353,8 +382,8 @@ def visualize():
         plt.plot(xc[-nr_drivers],yc[-nr_drivers], c='r', marker = 's')
         plt.scatter(xc[1:len(xc)-nr_drivers], yc[1:len(yc)-nr_drivers], c='b')
         plt.show()
-        print(active_arcs)
-        print(arc_sum)
+        print(arcs)
+        print(arcsum)
 
 visualize()
 

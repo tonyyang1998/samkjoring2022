@@ -7,7 +7,7 @@
     "destination_yc": 18,
     "lower_tw": 1000,
     "upper_tw": 1200,
-    "max_ride_time": 50,
+    "max_ride_time": 150,
     "max_capacity": 4
     },
   "D2": {
@@ -18,7 +18,7 @@
     "destination_yc": 14,
     "lower_tw": 1000,
     "upper_tw": 1200,
-    "max_ride_time": 50,
+    "max_ride_time": 150,
     "max_capacity": 4
     }
 }

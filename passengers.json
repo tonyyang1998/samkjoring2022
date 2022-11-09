@@ -7,7 +7,7 @@
     "destination_yc": 20,
     "lower_tw": 1100,
     "upper_tw": 1150,
-    "max_ride_time": 50
+    "max_ride_time": 150
 
   },
   "P2": {
@@ -18,7 +18,7 @@
     "destination_yc": 12,
     "lower_tw": 1100,
     "upper_tw": 1120,
-    "max_ride_time": 50
+    "max_ride_time": 150
   },
   "P3": {
     "id": 4,
@@ -28,6 +28,6 @@
     "destination_yc": 10,
     "lower_tw": 1100,
     "upper_tw": 1125,
-    "max_ride_time": 50
+    "max_ride_time": 150
   }
 }

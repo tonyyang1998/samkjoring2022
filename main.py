@@ -375,12 +375,69 @@ def visualize():
                 arcs[k] = active_arcs
                 arcsum[k] = arc_sum
 
-        plt.plot(xc[0], yc[0], c='r', marker='s')
+        driver_origin_coordinates_x = []
+        driver_destination_coordinates_x = []
+        passenger_pick_up_coordinates_x = []
+        passenger_delivery_coordinates_x = []
+        driver_origin_coordinates_y = []
+        driver_destination_coordinates_y = []
+        passenger_pick_up_coordinates_y = []
+        passenger_delivery_coordinates_y = []
+
+        """Plot driver origin nodes"""
+        for driver in range(nr_drivers):
+                driver_origin_coordinates_x.append(xc[driver])
+                driver_origin_coordinates_y.append(yc[driver])
+
+        """Plot passenger pick up nodes"""
+        for passenger in range(nr_drivers, nr_passengers + nr_drivers):
+                passenger_pick_up_coordinates_x.append(xc[passenger])
+                passenger_pick_up_coordinates_y.append(yc[passenger])
+
+        #Plot passenger delivery nodes
+        for passenger in range(nr_drivers + nr_passengers, nr_passengers * 2 + nr_drivers):
+                passenger_delivery_coordinates_x.append(xc[passenger])
+                passenger_delivery_coordinates_y.append(yc[passenger])
+
+        #Plot driver destination nodes
+        for driver in range(nr_passengers * 2 + nr_drivers, nr_passengers * 2 + nr_drivers * 2):
+                driver_destination_coordinates_x.append(xc[driver])
+                driver_destination_coordinates_y.append(yc[driver])
+        
+        plt.scatter(driver_origin_coordinates_x, driver_origin_coordinates_y, c='r', marker='s', label='Driver origin node')
+        plt.scatter(passenger_pick_up_coordinates_x, passenger_pick_up_coordinates_y, c='b', marker='s', label='Passenger pick up node')
+        plt.scatter(passenger_delivery_coordinates_x, passenger_delivery_coordinates_y, c='b', marker='o', label='Passenger delivery node')
+        plt.scatter(driver_destination_coordinates_x, driver_destination_coordinates_y, c='r', marker='o', label='Driver destination node')
+        i=0
+        for z,y in zip(driver_origin_coordinates_x, driver_origin_coordinates_y):
+                i = i+1
+                label = 'DO'+str(i)
+                plt.annotate(label, (z, y), ha='center')
+        i=0
+        for z,y in zip(passenger_pick_up_coordinates_x, passenger_pick_up_coordinates_y):
+                i = i+1
+                label = 'PPU'+str(i)
+                plt.annotate(label, (z, y), ha='center')
+        i=0
+        for z,y in zip(passenger_delivery_coordinates_x, passenger_delivery_coordinates_y):
+                i = i+1
+                label = 'PD'+str(i)
+                plt.annotate(label, (z, y), ha='center')
+        i=0
+        for z,y in zip(driver_destination_coordinates_x, driver_destination_coordinates_y):
+                i = i+1
+                label = 'DD'+str(i)
+                plt.annotate(label, (z, y), ha='center')
+
+        plt.legend()
+        plt.show()
+
+        """plt.plot(xc[0], yc[0], c='r', marker='s')
         plt.plot(xc[1], yc[1], c='r', marker='s')
         plt.plot(xc[-1],yc[-1], c='r', marker = 's')
         plt.plot(xc[-nr_drivers],yc[-nr_drivers], c='r', marker = 's')
         plt.scatter(xc[1:len(xc)-nr_drivers], yc[1:len(yc)-nr_drivers], c='b')
-        plt.show()
+        plt.show()"""
         print(arcs)
         print(arcsum)
 

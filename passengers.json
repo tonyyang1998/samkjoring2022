@@ -1,6 +1,6 @@
 {
   "P1": {
-    "id": 3,
+    "id": 4,
     "origin_xc": 12,
     "origin_yc": 18,
     "destination_xc": 30,
@@ -11,7 +11,7 @@
 
   },
   "P2": {
-    "id": 4,
+    "id": 5,
     "origin_xc": 16,
     "origin_yc": 8,
     "destination_xc": 32,
@@ -22,11 +22,21 @@
 
   },
   "P3": {
-    "id": 5,
+    "id": 6,
     "origin_xc": 20,
     "origin_yc": 16,
     "destination_xc": 40,
     "destination_yc": 10,
+    "lower_tw": 1100,
+    "upper_tw": 1125,
+    "max_ride_time": 150
+  },
+  "P4": {
+    "id": 7,
+    "origin_xc": 22,
+    "origin_yc": 16,
+    "destination_xc": 40,
+    "destination_yc": 20,
     "lower_tw": 1100,
     "upper_tw": 1125,
     "max_ride_time": 150

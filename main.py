@@ -83,10 +83,10 @@ t = model.addVars([(k, i) for k in D for i in N_k], vtype=GRB.CONTINUOUS, name='
 model.update()
 
 '''Model'''
-#model.modelSense = GRB.MINIMIZE
-#model.setObjective(quicksum(T_ij[i,j]*x[k,i,j] for i, j in A_k for k in D), GRB.MINIMIZE)
-model.modelSense = GRB.MAXIMIZE
-model.setObjective(quicksum(z[i] for i in NP))
+model.modelSense = GRB.MINIMIZE
+model.setObjective(quicksum(T_ij[i,j]*x[k,i,j] for i, j in A_k for k in D), GRB.MINIMIZE)
+#model.modelSense = GRB.MAXIMIZE
+#model.setObjective(quicksum(z[i] for i in NP))
 model.update()
 
 
@@ -95,8 +95,13 @@ def add_constraints():
         '''Routing constraits'''
         model.addConstrs(quicksum(x[k,i,j] for j in NP + driver_destination_nodes) == 1 for i in o_k.values() for k in D)
         model.addConstrs(quicksum(x[k,i,j] for i in driver_origin_nodes + ND) == 1 for j in d_k.values() for k in D)
-        model.addConstrs((quicksum(x[k,i,j] for j in N_k[nr_drivers:] if j!=i) == quicksum(x[k,j,i] for j in N_k[:-nr_drivers] if j!=i)) for k in D for i in N_k[nr_drivers:-nr_drivers])
+
+        model.addConstrs((quicksum(x[k,i,j] for j in N_k[nr_drivers:] if j!=i) == quicksum(x[k,j,i] for j in N_k[:-nr_drivers]
+                                                                if j!=i)) for k in D for i in N_ k[nr_drivers:-nr_drivers])
+
+
         model.addConstrs((quicksum(x[k,i,j] for j in N_k if j!=i) - quicksum(x[k,nr_passengers+i,j] for j in ND + driver_destination_nodes if j!=(i+nr_passengers)))==0 for k in D for i in NP)
+
         model.addConstrs((quicksum(x[k,i,j] for k in D for j in N_k if j!=i))-z[i]==0 for i in NP)
 
         #ny constraint 1
@@ -127,6 +132,10 @@ def add_constraints():
 
         '''Capacity constraint'''
         model.addConstrs(quicksum(x[k,i,j] for i in NP for j in N_k if j!=i) <= Q_k[k] for k in D)
+
+        model.addConstr((quicksum(z[i] for i in NP) <= nr_passengers))
+        model.addConstr((quicksum(z[i] for i in NP) >= nr_passengers/2))
+
         model.update()
 
 """Optimize"""

@@ -97,7 +97,7 @@ def add_constraints():
         model.addConstrs(quicksum(x[k,i,j] for i in driver_origin_nodes + ND) == 1 for j in d_k.values() for k in D)
 
         model.addConstrs((quicksum(x[k,i,j] for j in N_k[nr_drivers:] if j!=i) == quicksum(x[k,j,i] for j in N_k[:-nr_drivers]
-                                                                if j!=i)) for k in D for i in N_ k[nr_drivers:-nr_drivers])
+                                                                if j!=i)) for k in D for i in N_k[nr_drivers:-nr_drivers])
 
 
         model.addConstrs((quicksum(x[k,i,j] for j in N_k if j!=i) - quicksum(x[k,nr_passengers+i,j] for j in ND + driver_destination_nodes if j!=(i+nr_passengers)))==0 for k in D for i in NP)

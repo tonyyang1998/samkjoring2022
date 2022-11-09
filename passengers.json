@@ -29,5 +29,35 @@
     "lower_tw": 1100,
     "upper_tw": 1125,
     "max_ride_time": 150
+  },
+  "P4": {
+    "id": 6,
+    "origin_xc": 22,
+    "origin_yc": 18,
+    "destination_xc": 40,
+    "destination_yc": 10,
+    "lower_tw": 1100,
+    "upper_tw": 1125,
+    "max_ride_time": 150
+  },
+  "P5": {
+    "id": 7,
+    "origin_xc": 24,
+    "origin_yc": 30,
+    "destination_xc": 40,
+    "destination_yc": 10,
+    "lower_tw": 1100,
+    "upper_tw": 1125,
+    "max_ride_time": 150
+  },
+  "P6": {
+    "id": 8,
+    "origin_xc": 24,
+    "origin_yc": 8,
+    "destination_xc": 40,
+    "destination_yc": 10,
+    "lower_tw": 1100,
+    "upper_tw": 1125,
+    "max_ride_time": 150
   }
 }

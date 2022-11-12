@@ -104,6 +104,7 @@ def process_NK():
     '''Removes nodes where:
          1) the quickest path between (i, j) = (driver origin node, passenger delivery node) is not within j's timewindow
          2) the quickest path between (i, j) = (passenger pick up node, passenger delivery node) is not within j's timewindow
+         must also include a max_ride_time for passenger here removal
          3) the quickest path between (i, j) = (driver origin node, passenger delivery node) is not within the maximum ridetime from driver origin node i to j
         :return: {k: [nodes]} - returns set of feasible nodes driver k can travel to and excludes other driver's origin and destination nodes
         '''
@@ -214,6 +215,9 @@ def process_AK(NK):
     AK = {k: [(i, j) for i in NK[k] for j in NK[k] if i != j] for k in NK}
     for driver in AK:
         arcs = []
+        """Removes:
+         1) all arcs where i is a destination node and j is a origin node, and removes all arcs from deliverys to pick ups"""
+
         for arc in AK[driver]:
             i = arc[0]
             j = arc[1]
@@ -221,10 +225,18 @@ def process_AK(NK):
                 if not check_driver_destination_node(i):
                     if not from_delivery_to_pickup_arc(arc):
                         arcs.append(arc)
+
         for arc in AK[driver]:
+            """Removes
+                2) all arcs going into j, if a passenger that has j as the delivery node 
+                where traveling from that guys pick up node to j exceeds the max time a passenger is willing to ride
+                3) all arcs where i is a pick up node and j is a destination node
+                4) all arcs that goes from origin node to a delivery node
+                5) all arcs from origin to destination where j is not the assocaited destination node
+                6) all arcs where i is not the origin node of driver k
+                7) all arcs where i is a delivery node and j is not the associated destination node for driver k"""
             i = arc[0]
             j = arc[1]
-            """removes all arcs going into j, if a passenger that has j as the delivery node where traveling from that guys pick up node to j exceeds the max time a passenger is willing to ride"""
             if i in NP and j in ND and pickup_and_delivery_node_pairs[i] == j and T_k[i] < T_ij[(i, j)]:
                 arcs.remove(arc)
                 for i in D + NP:
@@ -232,24 +244,32 @@ def process_AK(NK):
                         arcs.remove((i, j))
                 # legge til å fjerne alle kanter som går inn til den pick up noden også
 
-        """"""
-        for arc in AK[driver]:
-            i = arc[0]
-            j = arc[1]
             if i != driver_origin_nodes[driver] and i in NP:
-                if j in [driver_destination_nodes[driver]]:
+                if j in list(driver_destination_nodes.values()):
                     arcs.remove((i, j))
-        """removes all arcs that goes from origin node to a delivery node"""
-        for arc in AK[driver]:
-            i = arc[0]
-            j = arc[1]
+
             if i == driver_origin_nodes[driver] and j in ND:
                 arcs.remove((i, j))
+
+
+            if i == driver_origin_nodes[driver] and j in list(driver_destination_nodes.values()):
+                if j != driver_destination_nodes[driver]:
+                    arcs.remove((i, j))
+
+            if i != driver_origin_nodes[driver] and i in list(driver_origin_nodes.values()):
+                if j in NP or j in ND or j in list(driver_destination_nodes.values()):
+                    arcs.remove((i, j))
+
+            if i in ND:
+                if j != driver_destination_nodes[driver]:
+                    if j in list(driver_destination_nodes.values()):
+                        arcs.remove((i, j))
 
         result[driver] = arcs
 
     return result
 
+print(NK)
 
 AK = process_AK(NK)
 
@@ -386,16 +406,17 @@ model.Params.TimeLimit = 30
 add_constraints()
 model.optimize()
 
-obj = model.getObjective()
-for i in model.getVars():
-    print(i, i.x)
 
-"""model.computeIIS()
-model.write('model.MPS')
-model.write('model.lp')
-model.write('model.ilp')"""
 
-"""Visualization"""
+"""Visualization & debug"""
+
+
+def debug():
+    model.computeIIS()
+    model.write('model.MPS')
+    model.write('model.lp')
+    model.write('model.ilp')
+
 
 
 def visualize():
@@ -482,6 +503,16 @@ def visualize():
     print(arcs)
     print(arcsum)
 
+def get_feasible_variables():
+    obj = model.getObjective()
+    for i in model.getVars():
+        print(i, i.x)
 
 visualize()
+get_feasible_variables()
+
+print(AK)
+
+#debug()
+
 

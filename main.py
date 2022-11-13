@@ -78,6 +78,8 @@ def add_parameters():
 
 add_parameters()
 
+
+
 driver_origin_nodes = {k: o_k[k] for k in D}
 driver_destination_nodes = {k: d_k[k] for k in D}
 
@@ -234,7 +236,9 @@ def process_AK(NK):
                 4) all arcs that goes from origin node to a delivery node
                 5) all arcs from origin to destination where j is not the assocaited destination node
                 6) all arcs where i is not the origin node of driver k
-                7) all arcs where i is a delivery node and j is not the associated destination node for driver k"""
+                7) all arcs where i is a delivery node and j is not the associated destination node for driver k
+                8) (i,j) and (j, n+i) where i is a pick up node and j is a pick up node, where the time required to travel (i, j) plus
+                (j, n+i) is longer than the upper timewindow of delivery node (n+1)"""
             i = arc[0]
             j = arc[1]
             if i in NP and j in ND and pickup_and_delivery_node_pairs[i] == j and T_k[i] < T_ij[(i, j)]:
@@ -265,11 +269,17 @@ def process_AK(NK):
                     if j in list(driver_destination_nodes.values()):
                         arcs.remove((i, j))
 
+            if i in NP:
+                if j in NP:
+                    if i!=j:
+                        if T_ij[(i,j)] + T_ij[(j, nr_passengers + i)] > A_k2[nr_passengers+i]:
+                            arcs.remove((i, j))
+                            arcs.remove((j, nr_passengers+i))
+
+
         result[driver] = arcs
 
     return result
-
-print(NK)
 
 AK = process_AK(NK)
 
@@ -508,10 +518,10 @@ def get_feasible_variables():
     for i in model.getVars():
         print(i, i.x)
 
-visualize()
-get_feasible_variables()
 
-print(AK)
+get_feasible_variables()
+visualize()
+
 
 #debug()
 

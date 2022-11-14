@@ -474,7 +474,7 @@ def visualize():
                 label='Passenger pick up node')
     plt.scatter(passenger_delivery_coordinates_x, passenger_delivery_coordinates_y, c='c', marker='o',
                 label='Passenger delivery node')
-    plt.scatter(driver_destination_coordinates_x, driver_destination_coordinates_y, c='g', marker='s',
+    plt.scatter(driver_destination_coordinates_x, driver_destination_coordinates_y, c='m', marker='s',
                 label='Driver destination node')
     i = 0
     for z, y in zip(driver_origin_coordinates_x, driver_origin_coordinates_y):

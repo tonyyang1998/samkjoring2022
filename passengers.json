@@ -27,7 +27,7 @@
     "destination_xc": 40,
     "destination_yc": 10,
     "lower_tw": 45,
-    "upper_tw": 60,
+    "upper_tw": 80,
     "max_ride_time": 80
   }
 }

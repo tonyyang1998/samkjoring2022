@@ -55,7 +55,7 @@ T_ij = {(i, j): np.hypot(xc[i] - xc[j], yc[i] - yc[j]) for i, j in A}
 Q_k = {}
 A_k1 = {}
 A_k2 = {}
-M = 60
+M = 80
 
 
 
@@ -395,12 +395,9 @@ def add_constraints(epsilon):
     model.addConstrs(t[k, nr_passengers + i] <= A_k2[nr_passengers + i] for k in D for i in NPK[k])
 
     # ENDRET
-    model.addConstrs(A_k1[k1] <= t[k, k2] for k in D for k1 in driver_destination_nodes.values() for k2 in
-                     nodes_without_destinations[k])
 
-    # ENDRET
-    model.addConstrs(t[k, k2] <= A_k2[k1] for k in D for k1 in driver_destination_nodes.values() for k2 in
-                     nodes_without_destinations[k])
+    model.addConstrs(A_k1[k1] <= t[k, k1] for k in D for k1 in list(driver_destination_nodes.values()))
+    model.addConstrs(t[k, k1] <= A_k2[k1] for k in D for k1 in list(driver_destination_nodes.values()))
 
 
     model.addConstrs(t[k, nr_passengers + i] - t[k, i] <= T_k[i] for k in D for i in NPK[k])
@@ -408,14 +405,15 @@ def add_constraints(epsilon):
     model.addConstrs(t[k, driver_destination_nodes[k]] - t[k, driver_origin_nodes[k]] <= T_k[k] for k in D)
 
     # ny timewindow constraint:
-
-
+    # For only passengers
     model.addConstrs(
-        x[k, i, j] * A_k1[j] <= (t[k, i] + T_ij[i, j]) * x[k, i, j] for k in D for i in NPK[k] for j in NDK_and_destination_node[k]
+        x[k, i, j] * A_k1[j] <= (t[k, i] + T_ij[i, j]) * x[k, i, j] for k in D for i in NPK[k] for j in NDK[k]
         if (i, j) in AK[k])
     model.addConstrs(
-        x[k, i, j] * A_k2[j] >= (t[k, i] + T_ij[i, j]) * x[k, i, j] for k in D for i in NPK[k] for j in NDK_and_destination_node[k]
+        x[k, i, j] * A_k2[j] >= (t[k, i] + T_ij[i, j]) * x[k, i, j] for k in D for i in NPK[k] for j in NDK[k]
         if (i, j) in AK[k])
+
+
 
 
     '''Capacity constraint'''
@@ -547,7 +545,7 @@ def create_pareto_front():
 
 
 
-get_feasible_variables()
+#get_feasible_variables()
 visualize()
 
 

@@ -5,8 +5,8 @@
     "origin_yc": 12,
     "destination_xc": 42,
     "destination_yc": 18,
-    "lower_tw": 0,
-    "upper_tw": 62,
+    "lower_tw": 2,
+    "upper_tw": 63,
     "max_ride_time": 100,
     "max_capacity": 4
     }

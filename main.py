@@ -410,9 +410,9 @@ def add_constraints(epsilon):
 
 
 """Optimize"""
-"""model.Params.TimeLimit = 30
-add_constraints(nr_passengers)
-model.optimize()"""
+#model.Params.TimeLimit = 30
+#add_constraints(nr_passengers)
+#model.optimize()
 
 
 
@@ -470,11 +470,11 @@ def visualize():
         driver_destination_coordinates_y.append(yc[driver])
 
     plt.scatter(driver_origin_coordinates_x, driver_origin_coordinates_y, c='r', marker='s', label='Driver origin node')
-    plt.scatter(passenger_pick_up_coordinates_x, passenger_pick_up_coordinates_y, c='b', marker='s',
+    plt.scatter(passenger_pick_up_coordinates_x, passenger_pick_up_coordinates_y, c='b', marker='o',
                 label='Passenger pick up node')
-    plt.scatter(passenger_delivery_coordinates_x, passenger_delivery_coordinates_y, c='b', marker='o',
+    plt.scatter(passenger_delivery_coordinates_x, passenger_delivery_coordinates_y, c='c', marker='o',
                 label='Passenger delivery node')
-    plt.scatter(driver_destination_coordinates_x, driver_destination_coordinates_y, c='r', marker='o',
+    plt.scatter(driver_destination_coordinates_x, driver_destination_coordinates_y, c='g', marker='s',
                 label='Driver destination node')
     i = 0
     for z, y in zip(driver_origin_coordinates_x, driver_origin_coordinates_y):
@@ -484,7 +484,7 @@ def visualize():
     i = 0
     for z, y in zip(passenger_pick_up_coordinates_x, passenger_pick_up_coordinates_y):
         i = i + 1
-        label = 'PPU' + str(i)
+        label = 'PP' + str(i)
         plt.annotate(label, (z, y), ha='center')
     i = 0
     for z, y in zip(passenger_delivery_coordinates_x, passenger_delivery_coordinates_y):

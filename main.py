@@ -178,25 +178,6 @@ NPK = generate_NPK(NK)
 NDK = generate_NDK(NK)
 
 
-def generate_NDK_and_driverdestination_node(NDK):
-    """
-        :param NK: {k: [nodes]} - set of preprocessed feasible nodes for driver k to visit
-        :return: {k: [nodes]} - set of feasible pick up nodes for driver k to visit
-        """
-    result = {}
-    for drivers in NK:
-        nodes = []
-        for node in NK[drivers]:
-            if node in ND:
-                nodes.append(node)
-        nodes.append(driver_destination_nodes[drivers])
-        result[drivers] = nodes
-    return result
-
-NDK_and_destination_node = generate_NDK_and_driverdestination_node(NDK)
-
-
-
 def check_driver_origin_node(node):
     """ Checks if node is a driver origin node
         :param node: Integer - a node
@@ -395,8 +376,6 @@ def add_constraints(epsilon):
     model.addConstrs(t[k, nr_passengers + i] <= A_k2[nr_passengers + i] for k in D for i in NPK[k])
 
     # ENDRET
-
-    print(driver_destination_nodes)
     model.addConstrs(A_k1[driver_destination_nodes[k]] <= t[k, driver_destination_nodes[k]] for k in D)
     model.addConstrs(t[k, driver_destination_nodes[k]] <= A_k2[driver_destination_nodes[k]] for k in D)
 
@@ -415,8 +394,6 @@ def add_constraints(epsilon):
         if (i, j) in AK[k])
 
 
-
-    print(AK)
     '''Capacity constraint'''
     model.addConstrs(quicksum(
         x[k, i, j] for i in NPK[k] for j in NK[k] if

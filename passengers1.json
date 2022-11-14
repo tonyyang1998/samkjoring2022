@@ -1,305 +1,144 @@
 {
-    "P0": {
-    "id": 10,
-    "origin_xc": 46,
-    "origin_yc": 46,
-    "destination_xc": 78,
-    "destination_yc": 78,
+  "F": {
+    "id": 5,
+    "origin_xc": 15,
+    "origin_yc": 10,
+    "destination_xc": 90,
+    "destination_yc": 30,
     "lower_tw": 110,
     "upper_tw": 1225,
     "max_ride_time": 1500
   },
-  "P1": {
-    "id": 11,
-    "origin_xc": 18,
-    "origin_yc": 18,
-    "destination_xc": 50,
-    "destination_yc": 50,
+    "O": {
+    "id": 6,
+    "origin_xc": 20,
+    "origin_yc": 5,
+    "destination_xc": 80,
+    "destination_yc": -10,
+    "lower_tw": 110,
+    "upper_tw": 1225,
+    "max_ride_time": 1500
+  },
+  "J": {
+    "id": 7,
+    "origin_xc": 20,
+    "origin_yc": -10,
+    "destination_xc": 70,
+    "destination_yc": 30,
     "lower_tw": 110,
     "upper_tw": 1150,
     "max_ride_time": 1500
 
   },
-  "P2": {
-    "id": 12,
-    "origin_xc": 19,
-    "origin_yc": 19,
-    "destination_xc": 51,
-    "destination_yc": 51,
+  "G": {
+    "id": 8,
+    "origin_xc": 25,
+    "origin_yc": 20,
+    "destination_xc": 80,
+    "destination_yc": 20,
     "lower_tw": 110,
     "upper_tw": 1220,
     "max_ride_time": 1500
   },
-  "P3": {
-    "id": 13,
-    "origin_xc": 20,
-    "origin_yc": 20,
-    "destination_xc": 52,
-    "destination_yc": 52,
+  "Q": {
+    "id": 9,
+    "origin_xc": 40,
+    "origin_yc": 35,
+    "destination_xc": 100,
+    "destination_yc": 10,
     "lower_tw": 110,
     "upper_tw": 1225,
     "max_ride_time": 1500
   },
-  "P4": {
-    "id": 14,
-    "origin_xc": 21,
-    "origin_yc": 21,
-    "destination_xc": 53,
-    "destination_yc": 53,
+  "P": {
+    "id": 10,
+    "origin_xc": 45,
+    "origin_yc": 30,
+    "destination_xc": 100,
+    "destination_yc": -10,
     "lower_tw": 110,
     "upper_tw": 1225,
     "max_ride_time": 1500
   },
-  "P5": {
-    "id": 15,
-    "origin_xc": 22,
-    "origin_yc": 22,
-    "destination_xc": 54,
-    "destination_yc": 54,
+  "T": {
+    "id": 11,
+    "origin_xc": 45,
+    "origin_yc": -5,
+    "destination_xc": 90,
+    "destination_yc": 10,
     "lower_tw": 110,
     "upper_tw": 1225,
     "max_ride_time": 1500
   },
-  "P6": {
-    "id": 16,
-    "origin_xc": 23,
-    "origin_yc": 23,
-    "destination_xc": 55,
-    "destination_yc": 55,
+  "K": {
+    "id": 12,
+    "origin_xc": 40,
+    "origin_yc": -10,
+    "destination_xc": 80,
+    "destination_yc": 0,
     "lower_tw": 10,
     "upper_tw": 1225,
     "max_ride_time": 1500
   },
-  "P7": {
-    "id": 17,
-    "origin_xc": 24,
-    "origin_yc": 24,
-    "destination_xc": 56,
-    "destination_yc": 56,
-    "lower_tw": 110,
-    "upper_tw": 1225,
-    "max_ride_time": 1500
-  },
-  "P9": {
-    "id": 18,
-    "origin_xc": 25,
-    "origin_yc": 25,
-    "destination_xc": 57,
-    "destination_yc": 57,
-    "lower_tw": 110,
-    "upper_tw": 1225,
-    "max_ride_time": 1500
-  },
-  "P10": {
-    "id": 19,
-    "origin_xc": 26,
-    "origin_yc": 26,
-    "destination_xc": 58,
-    "destination_yc": 58,
-    "lower_tw": 110,
-    "upper_tw": 1225,
-    "max_ride_time": 1500
-  },
-    "P11": {
-    "id": 20,
-    "origin_xc": 27,
-    "origin_yc": 27,
-    "destination_xc": 59,
-    "destination_yc": 59,
-    "lower_tw": 110,
-    "upper_tw": 1225,
-    "max_ride_time": 1500
-  },
-    "P12": {
-    "id": 21,
-    "origin_xc": 28,
-    "origin_yc": 28,
-    "destination_xc": 60,
-    "destination_yc": 60,
-    "lower_tw": 110,
-    "upper_tw": 1225,
-    "max_ride_time": 1500
-  },
-    "P13": {
-    "id": 22,
-    "origin_xc": 29,
-    "origin_yc": 29,
-    "destination_xc": 61,
-    "destination_yc": 61,
-    "lower_tw": 110,
-    "upper_tw": 1225,
-    "max_ride_time": 1500
-  },
-    "P14": {
-    "id": 23,
-    "origin_xc": 30,
-    "origin_yc": 30,
-    "destination_xc": 62,
-    "destination_yc": 62,
-    "lower_tw": 110,
-    "upper_tw": 1225,
-    "max_ride_time": 1500
-  },
-    "P15": {
-    "id": 24,
-    "origin_xc": 31,
-    "origin_yc": 31,
-    "destination_xc": 63,
-    "destination_yc": 63,
-    "lower_tw": 110,
-    "upper_tw": 1225,
-    "max_ride_time": 1500
-  },
-    "P16": {
-    "id": 25,
-    "origin_xc": 32,
-    "origin_yc": 32,
-    "destination_xc": 64,
-    "destination_yc": 64,
-    "lower_tw": 110,
-    "upper_tw": 1225,
-    "max_ride_time": 1500
-  },
-    "P17": {
-    "id": 26,
-    "origin_xc": 33,
-    "origin_yc": 33,
-    "destination_xc": 65,
-    "destination_yc": 65,
-    "lower_tw": 110,
-    "upper_tw": 1225,
-    "max_ride_time": 1500
-  },
-    "P18": {
-    "id": 27,
-    "origin_xc": 34,
-    "origin_yc": 34,
-    "destination_xc": 66,
-    "destination_yc": 66,
-    "lower_tw": 110,
-    "upper_tw": 1225,
-    "max_ride_time": 1500
-  },
-    "P19": {
-    "id": 28,
-    "origin_xc": 35,
-    "origin_yc": 35,
-    "destination_xc": 67,
-    "destination_yc": 67,
-    "lower_tw": 110,
-    "upper_tw": 1225,
-    "max_ride_time": 1500
-  },
-    "P20": {
-    "id": 29,
-    "origin_xc": 36,
-    "origin_yc": 36,
-    "destination_xc": 68,
-    "destination_yc": 68,
-    "lower_tw": 110,
-    "upper_tw": 1225,
-    "max_ride_time": 1500
-  },
-    "P21": {
-    "id": 30,
-    "origin_xc": 37,
-    "origin_yc": 37,
-    "destination_xc": 69,
-    "destination_yc": 69,
-    "lower_tw": 110,
-    "upper_tw": 1225,
-    "max_ride_time": 1500
-  },
-    "P22": {
-    "id": 31,
-    "origin_xc": 38,
-    "origin_yc": 38,
-    "destination_xc": 70,
-    "destination_yc": 70,
-    "lower_tw": 110,
-    "upper_tw": 1225,
-    "max_ride_time": 1500
-  },
-    "P23": {
-    "id": 32,
-    "origin_xc": 39,
-    "origin_yc": 39,
-    "destination_xc": 71,
-    "destination_yc": 71,
-    "lower_tw": 110,
-    "upper_tw": 1225,
-    "max_ride_time": 1500
-  },
-    "P24": {
-    "id": 33,
-    "origin_xc": 40,
-    "origin_yc": 40,
-    "destination_xc": 72,
-    "destination_yc": 72,
-    "lower_tw": 110,
-    "upper_tw": 1225,
-    "max_ride_time": 1500
-  },
-    "P25": {
-    "id": 34,
-    "origin_xc": 41,
-    "origin_yc": 41,
-    "destination_xc": 73,
-    "destination_yc": 73,
-    "lower_tw": 110,
-    "upper_tw": 1225,
-    "max_ride_time": 1500
-  },
-    "P26": {
-    "id": 35,
-    "origin_xc": 42,
-    "origin_yc": 42,
-    "destination_xc": 74,
-    "destination_yc": 74,
-    "lower_tw": 110,
-    "upper_tw": 1225,
-    "max_ride_time": 1500
-  },
-    "P27": {
-    "id": 36,
-    "origin_xc": 43,
-    "origin_yc": 43,
-    "destination_xc": 75,
-    "destination_yc": 75,
-    "lower_tw": 110,
-    "upper_tw": 1225,
-    "max_ride_time": 1500
-  },
-    "P28": {
-    "id": 37,
-    "origin_xc": 44,
-    "origin_yc": 44,
-    "destination_xc": 76,
-    "destination_yc": 76,
-    "lower_tw": 110,
-    "upper_tw": 1225,
-    "max_ride_time": 1500
-  },
-    "P29": {
-    "id": 38,
+  "S": {
+    "id": 13,
     "origin_xc": 45,
-    "origin_yc": 45,
-    "destination_xc": 77,
-    "destination_yc": 77,
+    "origin_yc": 5,
+    "destination_xc": 100,
+    "destination_yc": 20,
     "lower_tw": 110,
     "upper_tw": 1225,
     "max_ride_time": 1500
   },
-
-    "P30": {
-    "id": 39,
-    "origin_xc": 49,
-    "origin_yc": 49,
-    "destination_xc": 79,
-    "destination_yc": 79,
+  "H": {
+    "id": 14,
+    "origin_xc": 30,
+    "origin_yc": 0,
+    "destination_xc": 80,
+    "destination_yc": 50,
     "lower_tw": 110,
     "upper_tw": 1225,
     "max_ride_time": 1500
-  }
+  },
+  "I": {
+    "id": 15,
+    "origin_xc": 35,
+    "origin_yc": 25,
+    "destination_xc": 100,
+    "destination_yc": 40,
+    "lower_tw": 110,
+    "upper_tw": 1225,
+    "max_ride_time": 1500
+  },
+    "M": {
+    "id": 16,
+    "origin_xc": 30,
+    "origin_yc": 15,
+    "destination_xc": 110,
+    "destination_yc": 50,
+    "lower_tw": 110,
+    "upper_tw": 1225,
+    "max_ride_time": 1500
+  },
+    "L": {
+    "id": 17,
+    "origin_xc": 30,
+    "origin_yc": 10,
+    "destination_xc": 120,
+    "destination_yc": 50,
+    "lower_tw": 110,
+    "upper_tw": 1225,
+    "max_ride_time": 1500
+  },
+    "R": {
+      "id": 18,
+      "origin_xc": 45,
+      "origin_yc": 20,
+      "destination_xc": 110,
+      "destination_yc": 30,
+      "lower_tw": 110,
+      "upper_tw": 1225,
+      "max_ride_time": 1500
+    }
 
 }

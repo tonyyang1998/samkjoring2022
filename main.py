@@ -3,8 +3,8 @@ from gurobipy import Model, GRB, quicksum
 import matplotlib.pyplot as plt
 import json
 
-passengers_json = json.load(open('passengers.json'))
-drivers_json = json.load(open('drivers.json'))
+passengers_json = json.load(open('passengers1.json'))
+drivers_json = json.load(open('drivers1.json'))
 rnd = np.random
 rnd.seed(0)
 
@@ -404,7 +404,7 @@ def add_constraints(epsilon):
         (i, j) in AK[k]) <= Q_k[k] for k in D)
 
     """ADDED"""
-    model.addConstr(quicksum(z[i] for i in NP) <= nr_passengers)
+    model.addConstr(quicksum(z[i] for i in NP) <= nr_passengers+3)
     model.addConstr(quicksum(z[i] for i in NP) >= epsilon)
     model.update()
 
@@ -511,16 +511,18 @@ def get_feasible_variables():
 
 def create_pareto_front():
     objective_values = {}
-    for i in range(nr_passengers):
-        model.Params.TimeLimit = 30
+    for i in range(nr_passengers+1):
+        print("I: ", i)
+        #model.Params.TimeLimit = 30
         add_constraints(i)
         model.optimize()
         objective = model.getObjective()
         objective_values[i] = objective.getValue()
+        #visualize()
 
     plt.scatter(list(objective_values.keys()), list(objective_values.values()))
     plt.show()
-
+    visualize()
     print("Objective values: ", objective_values)
 
 

@@ -3,8 +3,8 @@ from gurobipy import Model, GRB, quicksum
 import matplotlib.pyplot as plt
 import json
 
-passengers_json = json.load(open('passengers1.json'))
-drivers_json = json.load(open('drivers1.json'))
+passengers_json = json.load(open('passengers.json'))
+drivers_json = json.load(open('drivers.json'))
 rnd = np.random
 rnd.seed(0)
 
@@ -55,7 +55,8 @@ T_ij = {(i, j): np.hypot(xc[i] - xc[j], yc[i] - yc[j]) for i, j in A}
 Q_k = {}
 A_k1 = {}
 A_k2 = {}
-M = 1200
+M = 60
+
 
 
 def add_parameters():
@@ -76,8 +77,6 @@ def add_parameters():
 
 
 add_parameters()
-
-
 
 driver_origin_nodes = {k: o_k[k] for k in D}
 driver_destination_nodes = {k: d_k[k] for k in D}
@@ -177,6 +176,25 @@ def generate_NDK(NK):
 
 NPK = generate_NPK(NK)
 NDK = generate_NDK(NK)
+
+
+def generate_NDK_and_driverdestination_node(NDK):
+    """
+        :param NK: {k: [nodes]} - set of preprocessed feasible nodes for driver k to visit
+        :return: {k: [nodes]} - set of feasible pick up nodes for driver k to visit
+        """
+    result = {}
+    for drivers in NK:
+        nodes = []
+        for node in NK[drivers]:
+            if node in ND:
+                nodes.append(node)
+        nodes.append(driver_destination_nodes[drivers])
+        result[drivers] = nodes
+    return result
+
+NDK_and_destination_node = generate_NDK_and_driverdestination_node(NDK)
+
 
 
 def check_driver_origin_node(node):
@@ -322,6 +340,8 @@ for k in D:
             liste.append(i)
     nodes_without_destinations[k] = liste
 
+
+
 def add_constraints(epsilon):
     '''Constraints'''
     '''Routing constraits'''
@@ -389,14 +409,14 @@ def add_constraints(epsilon):
 
     # ny timewindow constraint:
 
+
     model.addConstrs(
-        x[k, i, j] * A_k1[j] <= (t[k, i] + T_ij[i, j]) * x[k, i, j] for k in D for i in NPK[k] for j in NDK[k] if i != j
+        x[k, i, j] * A_k1[j] <= (t[k, i] + T_ij[i, j]) * x[k, i, j] for k in D for i in NPK[k] for j in NDK_and_destination_node[k]
         if (i, j) in AK[k])
     model.addConstrs(
-        x[k, i, j] * A_k2[j] >= (t[k, i] + T_ij[i, j]) * x[k, i, j] for k in D for i in NPK[k] for j in NDK[k] if i != j
+        x[k, i, j] * A_k2[j] >= (t[k, i] + T_ij[i, j]) * x[k, i, j] for k in D for i in NPK[k] for j in NDK_and_destination_node[k]
         if (i, j) in AK[k])
-    # model.addConstrs(A_k1[k1]<=(t[k, k1]+T_ij[] for k in D for k1 in d_k.values())
-    # model.addConstrs(t[k, k1]<=A_k2[k1] for k in D for k1 in d_k.values())
+
 
     '''Capacity constraint'''
     model.addConstrs(quicksum(
@@ -404,15 +424,15 @@ def add_constraints(epsilon):
         (i, j) in AK[k]) <= Q_k[k] for k in D)
 
     """ADDED"""
-    model.addConstr(quicksum(z[i] for i in NP) <= nr_passengers+3)
+    model.addConstr(quicksum(z[i] for i in NP) <= nr_passengers)
     model.addConstr(quicksum(z[i] for i in NP) >= epsilon)
     model.update()
 
 
 """Optimize"""
-#model.Params.TimeLimit = 30
-#add_constraints(nr_passengers)
-#model.optimize()
+model.Params.TimeLimit = 30
+add_constraints(nr_passengers)
+model.optimize()
 
 
 
@@ -527,10 +547,11 @@ def create_pareto_front():
 
 
 
-#get_feasible_variables()
-#visualize()
+get_feasible_variables()
+visualize()
 
-create_pareto_front()
+
+#create_pareto_front()
 #debug()
 
 

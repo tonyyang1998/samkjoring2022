@@ -1,35 +1,13 @@
 {
   "D1": {
     "id": 0,
-    "origin_xc": 9,
+    "origin_xc": 8,
     "origin_yc": 12,
     "destination_xc": 42,
     "destination_yc": 18,
-    "lower_tw": 1000,
-    "upper_tw": 1200,
-    "max_ride_time": 150,
-    "max_capacity": 4
-    },
-  "D2": {
-    "id": 1,
-    "origin_xc": 5,
-    "origin_yc": 4,
-    "destination_xc": 48,
-    "destination_yc": 30,
-    "lower_tw": 1000,
-    "upper_tw": 1200,
-    "max_ride_time": 150,
-    "max_capacity": 4
-    },
-    "D3": {
-    "id": 2,
-    "origin_xc": 10,
-    "origin_yc": 15,
-    "destination_xc": 45,
-    "destination_yc": 12,
-    "lower_tw": 1000,
-    "upper_tw": 1200,
-    "max_ride_time": 150,
+    "lower_tw": 0,
+    "upper_tw": 62,
+    "max_ride_time": 100,
     "max_capacity": 4
     }
 }

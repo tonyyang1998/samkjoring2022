@@ -31,16 +31,5 @@
     "upper_tw": 1200,
     "max_ride_time": 150,
     "max_capacity": 4
-    },
-  "D4": {
-    "id": 3,
-    "origin_xc": 8,
-    "origin_yc": 0,
-    "destination_xc": 56,
-    "destination_yc": 22,
-    "lower_tw": 1000,
-    "upper_tw": 1200,
-    "max_ride_time": 90,
-    "max_capacity": 4
-  }
+    }
 }

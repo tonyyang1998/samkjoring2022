@@ -15,7 +15,6 @@ nr_drivers = len(drivers_json)
 xc = []
 yc = []
 
-
 def add_coordinates():
     """ Create coordinates (x, y) for the origins and destinations of drivers and passengers
         :return:
@@ -323,7 +322,7 @@ for k in D:
             liste.append(i)
     nodes_without_destinations[k] = liste
 
-def add_constraints():
+def add_constraints(epsilon):
     '''Constraints'''
     '''Routing constraits'''
 
@@ -406,14 +405,14 @@ def add_constraints():
 
     """ADDED"""
     model.addConstr(quicksum(z[i] for i in NP) <= nr_passengers)
-    model.addConstr(quicksum(z[i] for i in NP) >= nr_passengers)
+    model.addConstr(quicksum(z[i] for i in NP) >= epsilon)
     model.update()
 
 
 """Optimize"""
-model.Params.TimeLimit = 30
-add_constraints()
-model.optimize()
+"""model.Params.TimeLimit = 30
+add_constraints(nr_passengers)
+model.optimize()"""
 
 
 
@@ -509,10 +508,27 @@ def get_feasible_variables():
     for i in model.getVars():
         print(i, i.x)
 
-get_feasible_variables()
-visualize()
+
+def create_pareto_front():
+    objective_values = {}
+    for i in range(nr_passengers):
+        model.Params.TimeLimit = 30
+        add_constraints(i)
+        model.optimize()
+        objective = model.getObjective()
+        objective_values[i] = objective.getValue()
+
+    plt.scatter(list(objective_values.keys()), list(objective_values.values()))
+    plt.show()
+
+    print("Objective values: ", objective_values)
 
 
+
+#get_feasible_variables()
+#visualize()
+
+create_pareto_front()
 #debug()
 
 

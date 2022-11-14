@@ -6,7 +6,7 @@
     "destination_xc": 42,
     "destination_yc": 18,
     "lower_tw": 2,
-    "upper_tw": 63,
+    "upper_tw": 62.5,
     "max_ride_time": 100,
     "max_capacity": 4
     }

@@ -364,11 +364,11 @@ def add_constraints(epsilon):
                      for k in D for i in NPK[k])
 
     model.addConstrs((quicksum(
-        x[k, i, j] for k in D for j in NK[k] if j != i if j not in list(driver_origin_nodes.values()) if
+        x[k, i, j] for k in D for j in NK[k] if j not in list(driver_origin_nodes.values()) if
         (i, j) in AK[k])) - z[i] == 0 for i in NP)
 
     model.addConstrs((quicksum(
-        x[k, i, j] for k in D for i in NK[k] if j != i if i not in list(driver_destination_nodes.values()) if
+        x[k, i, j] for k in D for i in NK[k] if i not in list(driver_destination_nodes.values()) if
         (i, j) in AK[k])) <= 1 for j in NP + ND)
 
     # ny constraint 2 (endre i rapporten) ENDRING
@@ -396,8 +396,9 @@ def add_constraints(epsilon):
 
     # ENDRET
 
-    model.addConstrs(A_k1[k1] <= t[k, k1] for k in D for k1 in list(driver_destination_nodes.values()))
-    model.addConstrs(t[k, k1] <= A_k2[k1] for k in D for k1 in list(driver_destination_nodes.values()))
+    print(driver_destination_nodes)
+    model.addConstrs(A_k1[driver_destination_nodes[k]] <= t[k, driver_destination_nodes[k]] for k in D)
+    model.addConstrs(t[k, driver_destination_nodes[k]] <= A_k2[driver_destination_nodes[k]] for k in D)
 
 
     model.addConstrs(t[k, nr_passengers + i] - t[k, i] <= T_k[i] for k in D for i in NPK[k])
@@ -415,10 +416,10 @@ def add_constraints(epsilon):
 
 
 
-
+    print(AK)
     '''Capacity constraint'''
     model.addConstrs(quicksum(
-        x[k, i, j] for i in NPK[k] for j in NK[k] if j != i if j not in list(driver_origin_nodes.values()) if
+        x[k, i, j] for i in NPK[k] for j in NK[k] if
         (i, j) in AK[k]) <= Q_k[k] for k in D)
 
     """ADDED"""

@@ -1,5 +1,6 @@
 import numpy as np
 from gurobipy import Model, GRB, quicksum
+import gurobipy as gp
 import matplotlib.pyplot as plt
 import json
 
@@ -14,6 +15,10 @@ nr_drivers = len(drivers_json)
 '''Coordinates '''
 xc = []
 yc = []
+
+epsilon_dict={}
+
+
 
 def add_coordinates():
     """ Create coordinates (x, y) for the origins and destinations of drivers and passengers
@@ -55,8 +60,6 @@ T_ij = {(i, j): np.hypot(xc[i] - xc[j], yc[i] - yc[j]) for i, j in A}
 Q_k = {}
 A_k1 = {}
 A_k2 = {}
-M = 80
-
 
 
 def add_parameters():
@@ -75,11 +78,20 @@ def add_parameters():
         A_k1[passengers_json[passengers]['id'] + nr_passengers] = passengers_json[passengers]['lower_tw']
         A_k2[passengers_json[passengers]['id'] + nr_passengers] = passengers_json[passengers]['upper_tw']
 
-
 add_parameters()
 
 driver_origin_nodes = {k: o_k[k] for k in D}
 driver_destination_nodes = {k: d_k[k] for k in D}
+
+
+def initialize_big_M():
+    result={}
+    for driver in D:
+        result[driver] = T_k[driver]
+    return result
+
+
+M = initialize_big_M()
 
 
 def check_time_window_between_arc(i, j):
@@ -176,6 +188,8 @@ def generate_NDK(NK):
 
 NPK = generate_NPK(NK)
 NDK = generate_NDK(NK)
+
+print(NK)
 
 
 def check_driver_origin_node(node):
@@ -298,18 +312,16 @@ def set_variables():
 x, z, t = set_variables()
 
 
-def set_objective():
+def set_objective1():
     '''Model'''
-    model.modelSense = GRB.MINIMIZE
-    model.setObjective(quicksum(T_ij[i, j] * x[k, i, j] for k in D for i in NK[k] for j in NK[k] if (i, j) in AK[k]),
-                       GRB.MINIMIZE)
+    #model.setObjective(quicksum(T_ij[i, j] * x[k, i, j] for k in D for i in NK[k] for j in NK[k] if (i, j) in AK[k]),GRB.MINIMIZE)
     # model.setObjective(quicksum(T_ij[i,j]*x[k,i,j] for i in N for j in N for k in D if i!=j), GRB.MINIMIZE)
-    # model.modelSense = GRB.MAXIMIZE
-    # model.setObjective(quicksum(z[i] for i in NP))
+    model.modelSense = GRB.MAXIMIZE
+    model.setObjective(quicksum(z[i] for i in NP))
     model.update()
 
 
-set_objective()
+set_objective1()
 
 
 nodes_without_destinations = {}
@@ -320,7 +332,6 @@ for k in D:
         if i not in destinations:
             liste.append(i)
     nodes_without_destinations[k] = liste
-
 
 
 def add_constraints(epsilon):
@@ -335,21 +346,19 @@ def add_constraints(epsilon):
         [driver_destination_nodes[k]])
 
     model.addConstrs(((quicksum(x[k, i, j] for j in NK[k] if j not in [driver_origin_nodes[k]] if (i, j) in AK[k]))
-                      == quicksum(
-                x[k, j, i] for j in NK[k] if j not in [driver_destination_nodes[k]] if (j, i) in AK[k])) for k in D for
+                      == quicksum(x[k, j, i] for j in NK[k] if j not in [driver_destination_nodes[k]] if (j, i) in AK[k])) for k in D for
                      i in NK[k] if i not in [driver_origin_nodes[k]] if i not in [driver_destination_nodes[k]])
 
     model.addConstrs((quicksum(x[k, i, j] for j in NK[k] if (i, j) in AK[k])) -
                      (quicksum(x[k, nr_passengers + i, j] for j in ND + [driver_destination_nodes[k]] if
-                               (i + nr_passengers, j) in AK[k])) == 0
-                     for k in D for i in NPK[k])
+                               (i + nr_passengers, j) in AK[k])) == 0 for k in D for i in NPK[k])
 
-    model.addConstrs((quicksum(
-        x[k, i, j] for k in D for j in NK[k] if j not in list(driver_origin_nodes.values()) if
+    model.addConstrs(
+        (quicksum(x[k, i, j] for k in D for j in NK[k] if j not in list(driver_origin_nodes.values()) if
         (i, j) in AK[k])) - z[i] == 0 for i in NP)
 
-    model.addConstrs((quicksum(
-        x[k, i, j] for k in D for i in NK[k] if i not in list(driver_destination_nodes.values()) if
+    model.addConstrs(
+        (quicksum(x[k, i, j] for k in D for i in NK[k] if i not in list(driver_destination_nodes.values()) if
         (i, j) in AK[k])) <= 1 for j in NP + ND)
 
     # ny constraint 2 (endre i rapporten) ENDRING
@@ -369,20 +378,18 @@ def add_constraints(epsilon):
 
     '''Time constraint'''
     model.addConstrs(
-        t[(k, i)] + T_ij[(i, j)] - t[(k, j)] - M * (1 - x[k, i, j]) <= 0 for k in D for i in NK[k] for j in NK[k] if
+        t[(k, i)] + T_ij[(i, j)] - t[(k, j)] - M[k] * (1 - x[k, i, j]) <= 0 for k in D for i in NK[k] for j in NK[k] if
         (i, j) in AK[k])
 
     model.addConstrs(A_k1[nr_passengers + i] <= t[k, nr_passengers + i] for k in D for i in NPK[k])
     model.addConstrs(t[k, nr_passengers + i] <= A_k2[nr_passengers + i] for k in D for i in NPK[k])
 
-    # ENDRET
     model.addConstrs(A_k1[driver_destination_nodes[k]] <= t[k, driver_destination_nodes[k]] for k in D)
     model.addConstrs(t[k, driver_destination_nodes[k]] <= A_k2[driver_destination_nodes[k]] for k in D)
 
 
-    model.addConstrs(t[k, nr_passengers + i] - t[k, i] <= T_k[i] for k in D for i in NPK[k])
-
-    model.addConstrs(t[k, driver_destination_nodes[k]] - t[k, driver_origin_nodes[k]] <= T_k[k] for k in D)
+    #model.addConstrs(t[k, nr_passengers + i] - t[k, i] <= T_k[i] for k in D for i in NPK[k])
+    #model.addConstrs(t[k, driver_destination_nodes[k]] - t[k, driver_origin_nodes[k]] <= T_k[k] for k in D)
 
     # ny timewindow constraint:
     # For only passengers
@@ -395,26 +402,27 @@ def add_constraints(epsilon):
 
 
     '''Capacity constraint'''
-    model.addConstrs(quicksum(
-        x[k, i, j] for i in NPK[k] for j in NK[k] if
-        (i, j) in AK[k]) <= Q_k[k] for k in D)
+    model.addConstrs(
+        quicksum(x[k, i, j] for i in NPK[k] for j in NK[k] if (i, j) in AK[k]) <= Q_k[k] for k in D)
 
-    """ADDED"""
-    model.addConstr(quicksum(z[i] for i in NP) <= nr_passengers)
-    model.addConstr(quicksum(z[i] for i in NP) >= epsilon)
     model.update()
+    disposable = model.addConstrs(t[k, nr_passengers + i] - t[k, i] <= T_k[i] + epsilon for k in D for i in NPK[k])
+    model.update()
+    endaen = model.addConstrs(t[k, driver_destination_nodes[k]] - t[k, driver_origin_nodes[k]] <= T_k[k] + epsilon for k in D)
+
+    model.update()
+    return disposable, endaen
 
 
 """Optimize"""
-model.Params.TimeLimit = 30
-add_constraints(nr_passengers)
-model.optimize()
+def optimize():
 
+    model.Params.TimeLimit = 30
+    add_constraints()
+    model.optimize()
 
 
 """Visualization & debug"""
-
-
 def debug():
     model.computeIIS()
     model.write('model.MPS')
@@ -425,7 +433,6 @@ def visualize():
     arcs = {}
     arcsum = {}
     for k in D:
-
         active_arcs = [a for a in AK[k] if x[k, a[0], a[1]].x > 0.99]
         arc_sum = 0
         for i, j in active_arcs:
@@ -465,7 +472,8 @@ def visualize():
         driver_destination_coordinates_x.append(xc[driver])
         driver_destination_coordinates_y.append(yc[driver])
 
-    plt.scatter(driver_origin_coordinates_x, driver_origin_coordinates_y, c='r', marker='s', label='Driver origin node')
+    plt.scatter(driver_origin_coordinates_x, driver_origin_coordinates_y, c='r', marker='s',
+                label='Driver origin node')
     plt.scatter(passenger_pick_up_coordinates_x, passenger_pick_up_coordinates_y, c='b', marker='o',
                 label='Passenger pick up node')
     plt.scatter(passenger_delivery_coordinates_x, passenger_delivery_coordinates_y, c='c', marker='o',
@@ -500,34 +508,53 @@ def visualize():
     print(arcsum)
 
 def get_feasible_variables():
-    obj = model.getObjective()
     for i in model.getVars():
         print(i, i.x)
 
 
 def create_pareto_front():
     objective_values = {}
-    for i in range(nr_passengers+1):
-        print("I: ", i)
-        #model.Params.TimeLimit = 30
-        add_constraints(i)
+    for epsilon in range(0, 10):
+        disposable, endaen = add_constraints(epsilon)
         model.optimize()
         objective = model.getObjective()
-        objective_values[i] = objective.getValue()
-        #visualize()
+        get_feasible_variables()
+        objective_values[epsilon] = objective.getValue()
+        visualize()
+        model.remove(disposable)
+        model.remove(endaen)
+        model.update()
 
     plt.scatter(list(objective_values.keys()), list(objective_values.values()))
     plt.show()
-    visualize()
     print("Objective values: ", objective_values)
 
 
 
-#get_feasible_variables()
-visualize()
+def run_only_once():
+    optimize()
+    get_feasible_variables()
+    visualize()
 
 
-#create_pareto_front()
+def run_pareto():
+    create_pareto_front()
+
+run_pareto()
+#run_only_once()
+
 #debug()
 
+"""for epsilon in range(0, 4):
+    for k in D:
+        if (epsilon == 0):
+            T_k[k] = T_k[k] + 0
+            for p in NPK[k]:
+                T_k[p] = T_k[p] + 0
+        else:
+            T_k[k] = T_k[k] + 1
+            for p in NPK[k]:
+                T_k[p] = T_k[p] + 1
+                
+"""
 

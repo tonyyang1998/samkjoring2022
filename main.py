@@ -508,10 +508,10 @@ def visualize():
     plt.legend()
     plt.show()
 
+
+    arcs=sort_path(arcs)
     print(arcs)
     print(arcsum)
-    arcs=sort_path(arcs)
-
     return arcs
 
 def get_feasible_variables():
@@ -522,7 +522,7 @@ def get_feasible_variables():
 def create_pareto_front():
     objective_values = {}
     for epsilon in range(0, 11):
-        disposable, endaen = add_constraints(epsilon*3)
+        disposable, endaen = add_constraints()
         model.optimize()
         objective = model.getObjective()
         get_feasible_variables()
@@ -541,13 +541,13 @@ def run_only_once():
     optimize()
     #get_feasible_variables()
     arcs = visualize()
-    print("hei", arcs)
+
     return arcs
 
 def run_pareto():
     create_pareto_front()
 
-print("saus")
+
 #run_pareto()
 run_only_once()
 #debug()

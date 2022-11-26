@@ -495,8 +495,7 @@ def visualize():
 
     print(arcs)
     print(arcsum)
-    return driver_origin_coordinates_x, driver_origin_coordinates_y, driver_destination_coordinates_x, driver_destination_coordinates_y, passenger_pick_up_coordinates_x, passenger_pick_up_coordinates_y, passenger_delivery_coordinates_x, passenger_delivery_coordinates_y
-
+    return arcs
 def get_feasible_variables():
     for i in model.getVars():
         print(i, i.x)
@@ -523,14 +522,14 @@ def create_pareto_front():
 def run_only_once():
     optimize()
     #get_feasible_variables()
-    driver_origin_coordinates_x, driver_origin_coordinates_y, driver_destination_coordinates_x, driver_destination_coordinates_y, passenger_pick_up_coordinates_x, passenger_pick_up_coordinates_y, passenger_delivery_coordinates_x, passenger_delivery_coordinates_y = visualize()
-    return driver_origin_coordinates_x, driver_origin_coordinates_y, driver_destination_coordinates_x, driver_destination_coordinates_y, passenger_pick_up_coordinates_x, passenger_pick_up_coordinates_y, passenger_delivery_coordinates_x, passenger_delivery_coordinates_y
-
+    arcs = visualize()
+    print("hei", arcs)
+    return arcs
 
 def run_pareto():
     create_pareto_front()
 
 #run_pareto()
-#run_only_once()
+run_only_once()
 #debug()
 

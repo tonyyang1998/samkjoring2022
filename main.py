@@ -548,6 +548,6 @@ def run_pareto():
 
 
 
-run_only_once()
+#run_only_once()
 
 

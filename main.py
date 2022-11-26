@@ -539,7 +539,7 @@ def run_only_once():
     #get_feasible_variables()
     arcs = visualize()
     print("JEGLIKR12343432")
-    print("SATANIST123")
+    
     return arcs
 
 def run_pareto():

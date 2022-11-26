@@ -4,8 +4,10 @@ import gurobipy as gp
 import matplotlib.pyplot as plt
 import json
 
-passengers_json = json.load(open('passengers.json'))
-drivers_json = json.load(open('drivers.json'))
+
+
+passengers_json = json.load(open('Instances: Small/Small 1 Passenger.json'))
+drivers_json = json.load(open('Instances: Small/Small 1 Driver.json'))
 rnd = np.random
 rnd.seed(0)
 
@@ -250,7 +252,7 @@ def process_AK(NK):
                 6) all arcs where i is not the origin node of driver k
                 7) all arcs where i is a delivery node and j is not the associated destination node for driver k
                 8) (i,j) and (j, n+i) where i is a pick up node and j is a pick up node, where the time required to travel (i, j) plus
-                (j, n+i) is longer than the upper timewindow of delivery node (n+1)"""
+                (j, n+i) is longer than the max ridetime of i"""
             i = arc[0]
             j = arc[1]
             if i in NP and j in ND and pickup_and_delivery_node_pairs[i] == j and T_k[i] < T_ij[(i, j)]:
@@ -284,7 +286,7 @@ def process_AK(NK):
             if i in NP:
                 if j in NP:
                     if i!=j:
-                        if T_ij[(i,j)] + T_ij[(j, nr_passengers + i)] > A_k2[nr_passengers+i]:
+                        if T_ij[(i,j)] + T_ij[(j, nr_passengers + i)] > T_k[i]:
                             arcs.remove((i, j))
                             arcs.remove((j, nr_passengers+i))
 
@@ -334,7 +336,7 @@ for k in D:
     nodes_without_destinations[k] = liste
 
 
-def add_constraints(epsilon):
+def add_constraints():
     '''Constraints'''
     '''Routing constraits'''
 
@@ -361,16 +363,6 @@ def add_constraints(epsilon):
         (quicksum(x[k, i, j] for k in D for i in NK[k] if i not in list(driver_destination_nodes.values()) if
         (i, j) in AK[k])) <= 1 for j in NP + ND)
 
-    # ny constraint 2 (endre i rapporten) ENDRING
-    """old"""
-    # model.addConstr((quicksum(x[k,i,j] for k in D for i in N for j in driver_origin_nodes.values() if j!=i and (j not in driver_origin_nodes.values() and i not in driver_origin_nodes.values()))) == 0)
-    """La til arc (i, j) i AK[k] betingelse"""
-    # model.addConstr((quicksum(x[k, i, j] for k in D for i in NP + ND for j in [driver_origin_nodes[k]] if (i, j) in AK[k])) == 0)
-    # ny constraint 3
-    """old"""
-    # model.addConstr((quicksum(x[k,i,j] for k in D for i in driver_destination_nodes.values() for j in N if j!=i and (j not in driver_destination_nodes.values() and i not in driver_destination_nodes.values()))) == 0)
-    """La til arc (i, j) i AK[k] betingelse"""
-    # model.addConstr((quicksum(x[k, i, j] for k in D for i in [driver_destination_nodes[k]] for j in NP + ND if (i, j) in AK[k])) == 0)
 
     '''Precedence constraint'''
     model.addConstrs(t[k, i] + T_ij[i, nr_passengers + i] - t[k, nr_passengers + i] <= 0 for k in D for i in NP if
@@ -388,27 +380,25 @@ def add_constraints(epsilon):
     model.addConstrs(t[k, driver_destination_nodes[k]] <= A_k2[driver_destination_nodes[k]] for k in D)
 
 
-    #model.addConstrs(t[k, nr_passengers + i] - t[k, i] <= T_k[i] for k in D for i in NPK[k])
-    #model.addConstrs(t[k, driver_destination_nodes[k]] - t[k, driver_origin_nodes[k]] <= T_k[k] for k in D)
 
-    # ny timewindow constraint:
-    # For only passengers
-    model.addConstrs(
-        x[k, i, j] * A_k1[j] <= (t[k, i] + T_ij[i, j]) * x[k, i, j] for k in D for i in NPK[k] for j in NDK[k]
-        if (i, j) in AK[k])
-    model.addConstrs(
-        x[k, i, j] * A_k2[j] >= (t[k, i] + T_ij[i, j]) * x[k, i, j] for k in D for i in NPK[k] for j in NDK[k]
-        if (i, j) in AK[k])
+    #new waiting constraint
 
+    model.addConstrs(
+        x[k, i, j] * (t[k, i] + T_ij[i, j] - t[k, j]) == 0 for k in D for i in NK[k] for j in NK[k] if
+        (i, j) in AK[k])
+
+    model.addConstrs(
+        t[(k, i)] + T_ij[(i, j)] - t[(k, j)] + M[k] * (1 - x[k, i, j]) >= 0 for k in D for i in NK[k] for j in NK[k] if
+        (i, j) in AK[k])
 
     '''Capacity constraint'''
     model.addConstrs(
         quicksum(x[k, i, j] for i in NPK[k] for j in NK[k] if (i, j) in AK[k]) <= Q_k[k] for k in D)
 
     model.update()
-    disposable = model.addConstrs(t[k, nr_passengers + i] - t[k, i] <= T_k[i] + epsilon for k in D for i in NPK[k])
+    disposable = model.addConstrs(t[k, nr_passengers + i] - t[k, i] <= T_k[i]  for k in D for i in NPK[k])
     model.update()
-    endaen = model.addConstrs(t[k, driver_destination_nodes[k]] - t[k, driver_origin_nodes[k]] <= T_k[k] + epsilon for k in D)
+    endaen = model.addConstrs(t[k, driver_destination_nodes[k]] - t[k, driver_origin_nodes[k]] <= T_k[k]  for k in D)
 
     model.update()
     return disposable, endaen
@@ -514,8 +504,8 @@ def get_feasible_variables():
 
 def create_pareto_front():
     objective_values = {}
-    for epsilon in range(0, 10):
-        disposable, endaen = add_constraints(epsilon)
+    for epsilon in range(0, 11):
+        disposable, endaen = add_constraints(epsilon*3)
         model.optimize()
         objective = model.getObjective()
         get_feasible_variables()
@@ -527,8 +517,7 @@ def create_pareto_front():
 
     plt.scatter(list(objective_values.keys()), list(objective_values.values()))
     plt.show()
-    print("Objective values: ", objective_values)
-
+    print("Objective values: ", objective_values*111.021)
 
 
 def run_only_once():
@@ -540,21 +529,7 @@ def run_only_once():
 def run_pareto():
     create_pareto_front()
 
-run_pareto()
-#run_only_once()
-
+#run_pareto()
+run_only_once()
 #debug()
-
-"""for epsilon in range(0, 4):
-    for k in D:
-        if (epsilon == 0):
-            T_k[k] = T_k[k] + 0
-            for p in NPK[k]:
-                T_k[p] = T_k[p] + 0
-        else:
-            T_k[k] = T_k[k] + 1
-            for p in NPK[k]:
-                T_k[p] = T_k[p] + 1
-                
-"""
 

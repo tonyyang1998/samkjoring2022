@@ -538,7 +538,7 @@ def run_only_once():
     optimize()
     #get_feasible_variables()
     arcs = visualize()
-    print(FITTESAUS)
+    print("FITTESAUS")
     return arcs
 
 def run_pareto():

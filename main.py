@@ -190,8 +190,6 @@ def generate_NDK(NK):
 NPK = generate_NPK(NK)
 NDK = generate_NDK(NK)
 
-print(NK)
-
 
 def check_driver_origin_node(node):
     """ Checks if node is a driver origin node
@@ -506,10 +504,11 @@ def visualize():
         plt.annotate(label, (z, y), ha='center')
 
     plt.legend()
-    plt.show()
+    #plt.show()
+    print("Mais")
 
-    print(arcs)
-    print(arcsum)
+    #print(arcs)
+    #print(arcsum)
     arcs=sort_path(arcs)
 
     return arcs
@@ -541,13 +540,11 @@ def run_only_once():
     optimize()
     #get_feasible_variables()
     arcs = visualize()
-    print("hei", arcs)
     return arcs
 
 def run_pareto():
     create_pareto_front()
 
-print("saus")
 #run_pareto()
 run_only_once()
 #debug()

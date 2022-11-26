@@ -418,6 +418,21 @@ def debug():
     model.write('model.lp')
     model.write('model.ilp')
 
+
+def sort_path(arcs):
+    sorted_path = {}
+    for driver in arcs:
+        b = []
+        a = arcs[driver]
+        d = {t[0]: t[1] for t in a}
+        prev_key = 0
+        for i in range(len(d)):
+            b.append((prev_key, d[prev_key]))
+            prev_key = d[prev_key]
+        sorted_path[driver] = b
+    return sorted_path
+
+
 def visualize():
     arcs = {}
     arcsum = {}
@@ -495,7 +510,10 @@ def visualize():
 
     print(arcs)
     print(arcsum)
+    arcs=sort_path(arcs)
+
     return arcs
+
 def get_feasible_variables():
     for i in model.getVars():
         print(i, i.x)
@@ -530,6 +548,6 @@ def run_pareto():
     create_pareto_front()
 
 #run_pareto()
-#run_only_once()
+run_only_once()
 #debug()
 

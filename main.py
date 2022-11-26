@@ -523,13 +523,14 @@ def create_pareto_front():
 def run_only_once():
     optimize()
     #get_feasible_variables()
-    visualize()
+    driver_origin_coordinates_x, driver_origin_coordinates_y, driver_destination_coordinates_x, driver_destination_coordinates_y, passenger_pick_up_coordinates_x, passenger_pick_up_coordinates_y, passenger_delivery_coordinates_x, passenger_delivery_coordinates_y = visualize()
+    return driver_origin_coordinates_x, driver_origin_coordinates_y, driver_destination_coordinates_x, driver_destination_coordinates_y, passenger_pick_up_coordinates_x, passenger_pick_up_coordinates_y, passenger_delivery_coordinates_x, passenger_delivery_coordinates_y
 
 
 def run_pareto():
     create_pareto_front()
 
 #run_pareto()
-#run_only_once()
+print(run_only_once())
 #debug()
 

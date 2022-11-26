@@ -539,6 +539,8 @@ def run_only_once():
     #get_feasible_variables()
     arcs = visualize()
     print("FITTESAUS")
+    print("SATANIST")
+    print("KUKSAUS")
     return arcs
 
 def run_pareto():
@@ -546,6 +548,6 @@ def run_pareto():
 
 
 
-#run_only_once()
+run_only_once()
 
 

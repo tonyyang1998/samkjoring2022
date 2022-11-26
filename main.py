@@ -17,7 +17,7 @@ nr_drivers = len(drivers_json)
 xc = []
 yc = []
 
-epsilon_dict={}
+
 
 
 
@@ -393,9 +393,9 @@ def add_constraints():
         quicksum(x[k, i, j] for i in NPK[k] for j in NK[k] if (i, j) in AK[k]) <= Q_k[k] for k in D)
 
     model.update()
-    disposable = model.addConstrs(t[k, nr_passengers + i] - t[k, i] <= T_k[i]  for k in D for i in NPK[k])
+    disposable = model.addConstrs(t[k, nr_passengers + i] - t[k, i] <= T_k[i] for k in D for i in NPK[k])
     model.update()
-    endaen = model.addConstrs(t[k, driver_destination_nodes[k]] - t[k, driver_origin_nodes[k]] <= T_k[k]  for k in D)
+    endaen = model.addConstrs(t[k, driver_destination_nodes[k]] - t[k, driver_origin_nodes[k]] <= T_k[k] for k in D)
 
     model.update()
     return disposable, endaen
@@ -403,7 +403,6 @@ def add_constraints():
 
 """Optimize"""
 def optimize():
-
     model.Params.TimeLimit = 30
     add_constraints()
     model.optimize()
@@ -503,15 +502,12 @@ def visualize():
         label = 'DD' + str(i)
         plt.annotate(label, (z, y), ha='center')
 
-    plt.legend()
-    plt.show()
-    print("Mais")
-
+    #plt.legend()
+    #plt.show()
 
     arcs=sort_path(arcs)
     print(arcs)
     print(arcsum)
-
 
     return arcs
 
@@ -542,14 +538,14 @@ def run_only_once():
     optimize()
     #get_feasible_variables()
     arcs = visualize()
-
+    print(FITTESAUS)
     return arcs
 
 def run_pareto():
     create_pareto_front()
 
 
-#run_pareto()
+
 run_only_once()
-#debug()
+
 

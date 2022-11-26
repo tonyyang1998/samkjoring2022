@@ -502,8 +502,8 @@ def visualize():
         label = 'DD' + str(i)
         plt.annotate(label, (z, y), ha='center')
 
-    #plt.legend()
-    #plt.show()
+    plt.legend()
+    plt.show()
 
     arcs=sort_path(arcs)
     print(arcs)
@@ -538,7 +538,7 @@ def run_only_once():
     optimize()
     #get_feasible_variables()
     arcs = visualize()
-    print("JEGLIKERKUUUK")
+    print("JEGLIKR12343432")
     print("SATANIST123")
     return arcs
 
@@ -548,5 +548,4 @@ def run_pareto():
 
 
 #run_only_once()
-
 

@@ -547,6 +547,7 @@ def run_only_once():
 def run_pareto():
     create_pareto_front()
 
+print("saus")
 #run_pareto()
 run_only_once()
 #debug()

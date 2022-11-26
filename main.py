@@ -190,8 +190,6 @@ def generate_NDK(NK):
 NPK = generate_NPK(NK)
 NDK = generate_NDK(NK)
 
-print(NK)
-
 
 def check_driver_origin_node(node):
     """ Checks if node is a driver origin node
@@ -507,11 +505,14 @@ def visualize():
 
     plt.legend()
     plt.show()
+    print("Mais")
 
 
     arcs=sort_path(arcs)
     print(arcs)
     print(arcsum)
+
+
     return arcs
 
 def get_feasible_variables():

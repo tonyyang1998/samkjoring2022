@@ -5,7 +5,6 @@ import matplotlib.pyplot as plt
 import json
 
 
-
 passengers_json = json.load(open('Instances: Small/Small 1 Passenger.json'))
 drivers_json = json.load(open('Instances: Small/Small 1 Driver.json'))
 rnd = np.random
@@ -496,6 +495,7 @@ def visualize():
 
     print(arcs)
     print(arcsum)
+    return driver_origin_coordinates_x, driver_origin_coordinates_y, driver_destination_coordinates_x, driver_destination_coordinates_y, passenger_pick_up_coordinates_x, passenger_pick_up_coordinates_y, passenger_delivery_coordinates_x, passenger_delivery_coordinates_y
 
 def get_feasible_variables():
     for i in model.getVars():
@@ -517,12 +517,12 @@ def create_pareto_front():
 
     plt.scatter(list(objective_values.keys()), list(objective_values.values()))
     plt.show()
-    print("Objective values: ", objective_values*111.021)
+    print("Objective values: ", objective_values)
 
 
 def run_only_once():
     optimize()
-    get_feasible_variables()
+    #get_feasible_variables()
     visualize()
 
 
@@ -530,6 +530,6 @@ def run_pareto():
     create_pareto_front()
 
 #run_pareto()
-run_only_once()
+#run_only_once()
 #debug()
 

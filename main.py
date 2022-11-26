@@ -530,6 +530,6 @@ def run_pareto():
     create_pareto_front()
 
 #run_pareto()
-run_only_once()
+#run_only_once()
 #debug()
 

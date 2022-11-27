@@ -6,8 +6,8 @@ import json
 
 
 
-passengers_json = json.load(open('Instances: Small/Small 1 Passenger.json'))
-drivers_json = json.load(open('Instances: Small/Small 1 Driver.json'))
+passengers_json = json.load(open('Instances: Small/Small 4 Passenger.json'))
+drivers_json = json.load(open('Instances: Small/Small 4 Driver.json'))
 rnd = np.random
 rnd.seed(0)
 
@@ -517,7 +517,7 @@ def create_pareto_front():
 
     plt.scatter(list(objective_values.keys()), list(objective_values.values()))
     plt.show()
-    print("Objective values: ", objective_values*111.021)
+    print("Objective values: ", objective_values)
 
 
 def run_only_once():

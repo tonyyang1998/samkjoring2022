@@ -5,8 +5,8 @@ import matplotlib.pyplot as plt
 import json
 
 
-passengers_json = json.load(open('Instances: Small/Small 1 Passenger.json'))
-drivers_json = json.load(open('Instances: Small/Small 1 Driver.json'))
+passengers_json = json.load(open('Instances: Small/Small 4 Passenger.json'))
+drivers_json = json.load(open('Instances: Small/Small 4 Driver.json'))
 rnd = np.random
 rnd.seed(0)
 
@@ -16,9 +16,6 @@ nr_drivers = len(drivers_json)
 '''Coordinates '''
 xc = []
 yc = []
-
-
-
 
 
 def add_coordinates():
@@ -422,10 +419,12 @@ def sort_path(arcs):
         b = []
         a = arcs[driver]
         d = {t[0]: t[1] for t in a}
-        prev_key = 0
+        print(d)
+        prev_key = driver
         for i in range(len(d)):
             b.append((prev_key, d[prev_key]))
             prev_key = d[prev_key]
+  
         sorted_path[driver] = b
     return sorted_path
 
@@ -506,8 +505,8 @@ def visualize():
     plt.show()
 
     arcs=sort_path(arcs)
-    print(arcs)
-    print(arcsum)
+    #print(arcs)
+    #print(arcsum)
 
     return arcs
 
@@ -538,8 +537,6 @@ def run_only_once():
     optimize()
     #get_feasible_variables()
     arcs = visualize()
-    print("JEGLIKR12343432")
-    
     return arcs
 
 def run_pareto():

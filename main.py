@@ -5,7 +5,6 @@ import matplotlib.pyplot as plt
 import json
 
 
-
 passengers_json = json.load(open('Instances: Small/Small 4 Passenger.json'))
 drivers_json = json.load(open('Instances: Small/Small 4 Driver.json'))
 
@@ -428,7 +427,6 @@ def sort_path(arcs):
             path1.append(prev_key)
             b.append((prev_key, d[prev_key]))
             prev_key = d[prev_key]
-  
         sorted_path[driver] = b
         path[driver] = path1
     return sorted_path, path

@@ -5,8 +5,8 @@ import matplotlib.pyplot as plt
 import json
 
 
-passengers_json = json.load(open('Instances: Small/Small 1 Passenger.json'))
-drivers_json = json.load(open('Instances: Small/Small 1 Driver.json'))
+passengers_json = json.load(open('passengers.json'))
+drivers_json = json.load(open('drivers.json'))
 rnd = np.random
 rnd.seed(0)
 
@@ -418,16 +418,20 @@ def debug():
 
 def sort_path(arcs):
     sorted_path = {}
+    path={}
     for driver in arcs:
+        path1 = []
         b = []
         a = arcs[driver]
         d = {t[0]: t[1] for t in a}
-        prev_key = 0
+        prev_key = driver
         for i in range(len(d)):
+            path1.append(prev_key)
             b.append((prev_key, d[prev_key]))
             prev_key = d[prev_key]
         sorted_path[driver] = b
-    return sorted_path
+        path[driver] = path1
+    return sorted_path, path
 
 
 def visualize():
@@ -502,10 +506,10 @@ def visualize():
         label = 'DD' + str(i)
         plt.annotate(label, (z, y), ha='center')
 
-    #plt.legend()
-    #plt.show()
+    plt.legend()
+    plt.show()
 
-    arcs=sort_path(arcs)
+    arcs, path = sort_path(arcs)
     print(arcs)
     print(arcsum)
 
@@ -538,7 +542,6 @@ def run_only_once():
     optimize()
     #get_feasible_variables()
     arcs = visualize()
-    print("FITTESAUS")
     return arcs
 
 def run_pareto():
@@ -546,6 +549,6 @@ def run_pareto():
 
 
 
-#run_only_once()
+run_only_once()
 
 

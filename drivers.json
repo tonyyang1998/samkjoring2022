@@ -7,7 +7,7 @@
     "destination_yc": 18,
     "lower_tw": 60,
     "upper_tw": 80,
-    "max_ride_time": 35,
+    "max_ride_time": 70,
     "max_capacity": 4
     }
 }

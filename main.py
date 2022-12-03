@@ -4,11 +4,15 @@ import gurobipy as gp
 import matplotlib.pyplot as plt
 import json
 import time
+import TestExcel as te
+
+te.main("Large Instances/Large2.xlsx")
 
 start_time = time.time()
 
 passengers_json = json.load(open('sample_passenger.json'))
 drivers_json = json.load(open('sample_driver.json'))
+
 rnd = np.random
 rnd.seed(0)
 
@@ -18,9 +22,6 @@ nr_drivers = len(drivers_json)
 '''Coordinates '''
 xc = []
 yc = []
-
-epsilon_dict={}
-
 
 
 def add_coordinates():
@@ -191,8 +192,6 @@ def generate_NDK(NK):
 
 NPK = generate_NPK(NK)
 NDK = generate_NDK(NK)
-
-print(NK)
 
 
 def check_driver_origin_node(node):
@@ -397,9 +396,9 @@ def add_constraints():
         quicksum(x[k, i, j] for i in NPK[k] for j in NK[k] if (i, j) in AK[k]) <= Q_k[k] for k in D)
 
     model.update()
-    disposable = model.addConstrs(t[k, nr_passengers + i] - t[k, i] <= T_k[i]  for k in D for i in NPK[k])
+    disposable = model.addConstrs(t[k, nr_passengers + i] - t[k, i] <= T_k[i] for k in D for i in NPK[k])
     model.update()
-    endaen = model.addConstrs(t[k, driver_destination_nodes[k]] - t[k, driver_origin_nodes[k]] <= T_k[k]  for k in D)
+    endaen = model.addConstrs(t[k, driver_destination_nodes[k]] - t[k, driver_origin_nodes[k]] <= T_k[k] for k in D)
 
     model.update()
     return disposable, endaen
@@ -407,8 +406,6 @@ def add_constraints():
 
 """Optimize"""
 def optimize():
-
-    #model.Params.TimeLimit = 30
     model.setParam('MIPGap', 0.05)
     add_constraints()
     model.optimize()
@@ -420,6 +417,35 @@ def debug():
     model.write('model.MPS')
     model.write('model.lp')
     model.write('model.ilp')
+
+
+def sort_path(arcs):
+    sorted_path = {}
+    path={}
+    for driver in arcs:
+        path1 = []
+        b = []
+        a = arcs[driver]
+        d = {t[0]: t[1] for t in a}
+        prev_key = driver
+        for i in range(len(d)):
+            path1.append(prev_key)
+            b.append((prev_key, d[prev_key]))
+            prev_key = d[prev_key]
+  
+        sorted_path[driver] = b
+        path[driver] = path1
+
+    picked_up = {}
+    for driver in path:
+        picked_up_passengers = []
+        for passenger in path[driver]:
+            if passenger in NP:
+                picked_up_passengers.append(passenger)
+        picked_up[driver] = picked_up_passengers
+
+    return sorted_path, path, picked_up
+
 
 def visualize():
     arcs = {}
@@ -496,8 +522,12 @@ def visualize():
     plt.legend()
     plt.show()
 
+
+    arcs, path, picked_up = sort_path(arcs)
     print(arcs)
     print(arcsum)
+
+    return arcs, path, picked_up
 
 def get_feasible_variables():
     for i in model.getVars():
@@ -507,7 +537,7 @@ def get_feasible_variables():
 def create_pareto_front():
     objective_values = {}
     for epsilon in range(0, 11):
-        disposable, endaen = add_constraints(epsilon*3)
+        disposable, endaen = add_constraints()
         model.optimize()
         objective = model.getObjective()
         get_feasible_variables()
@@ -525,25 +555,45 @@ def create_pareto_front():
 def run_only_once():
     optimize()
     #get_feasible_variables()
-    visualize()
 
+    arcs, path, picked_up = visualize()
+    return arcs, picked_up
 
 def run_pareto():
     create_pareto_front()
 
-def is_picked_up(passenger):
-    return None
-
-def find_extra_travel_time():
+def find_extra_travel_time(picked_up):
     extra_time_per_rider = {}
+    for driver in picked_up:
+        for passenger in picked_up[driver]:
+            pick_up_time = t[driver, passenger].x
+            end_time = t[driver, passenger + nr_passengers].x
+            shortest_path = T_ij[passenger, passenger + nr_passengers]
+            extra_time = (end_time - pick_up_time) - shortest_path
+            extra_time_per_rider[passenger] = extra_time
+        destination_time = t[driver, driver_destination_nodes[driver]].x
+        origin_time = t[driver, driver_origin_nodes[driver]].x
+        direct_arc_time = T_ij[driver_origin_nodes[driver], driver_destination_nodes[driver]]
+        extra_time_per_rider[driver] = (destination_time - origin_time) - direct_arc_time
 
+    return extra_time_per_rider
 
 #run_pareto()
-run_only_once()
+
+arcs, picked_up = run_only_once()
 runtime = time.time() - start_time
 print('Total runtime: ', runtime)
 print('Optimality gap: ', model.MIPGap)
 print('Number of passengers: ', model.objVal)
-print('Extra ride time per rider: ')
+print('Picked up riders: ', picked_up)
+
+extra_time_per_rider = find_extra_travel_time(picked_up)
+print('Extra ride time per rider: ', extra_time_per_rider)
+
 #debug()
+
+
+
+
+
 

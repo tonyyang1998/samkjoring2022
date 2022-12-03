@@ -1,0 +1,32 @@
+{
+  "P1": {
+    "id": 2,
+    "origin_xc": 553.1090645 ,
+    "origin_yc": 6690.299097,
+    "destination_xc": 591.3159424,
+    "destination_yc": 6705.158703,
+    "lower_tw": 105,
+    "upper_tw": 135,
+    "max_ride_time": 94
+  },
+  "P2": {
+    "id": 3,
+    "origin_xc": 572.0939885,
+    "origin_yc": 6702.124943,
+    "destination_xc": 591.31594241,
+    "destination_yc": 6705.1587031,
+    "lower_tw": 120,
+    "upper_tw": 150,
+    "max_ride_time": 36
+  },
+  "P3": {
+    "id": 4,
+    "origin_xc": 564.8540871,
+    "origin_yc": 6700.36415,
+    "destination_xc": 594.2238045,
+    "destination_yc": 6701.616245,
+    "lower_tw": 105,
+    "upper_tw": 135,
+    "max_ride_time": 58
+  }
+}

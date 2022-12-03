@@ -6,7 +6,7 @@ import json
 import time
 import TestExcel as te
 
-te.main("Large Instances/Large2.xlsx")
+te.main("Large Instances/Large3.xlsx")
 
 start_time = time.time()
 
@@ -585,7 +585,8 @@ arcs, picked_up = run_only_once()
 runtime = time.time() - start_time
 print('Total runtime: ', runtime)
 print('Optimality gap: ', model.MIPGap)
-print('Number of passengers: ', model.objVal)
+print('Total number of passengers', nr_passengers)
+print('Number of picked up passengers: ', model.objVal)
 print('Picked up riders: ', picked_up)
 
 extra_time_per_rider = find_extra_travel_time(picked_up)

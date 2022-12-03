@@ -406,7 +406,8 @@ def add_constraints():
 
 """Optimize"""
 def optimize():
-    model.setParam('MIPGap', 0.05)
+    model.setParam('MIPGap', 0.1)
+    model.setParam('TimeLimit', 960)
     add_constraints()
     model.optimize()
 

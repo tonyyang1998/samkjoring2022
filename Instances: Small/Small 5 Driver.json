@@ -1,0 +1,112 @@
+{
+  "D1": {
+    "id": 0,
+    "origin_xc": 554.4,
+    "origin_yc": 6704.4,
+    "destination_xc": 591.3,
+    "destination_yc": 6705.2,
+    "lower_tw": 120,
+    "upper_tw": 150,
+    "max_ride_time": 66,
+    "max_capacity": 4
+  },
+  "D2": {
+    "id": 1,
+    "origin_xc": 568.6,
+    "origin_yc": 6700.8,
+    "destination_xc": 591.31,
+    "destination_yc": 6705.21,
+    "lower_tw": 120,
+    "upper_tw": 300,
+    "max_ride_time": 44,
+    "max_capacity": 4
+  },
+  "D3": {
+    "id": 2,
+    "origin_xc": 561.3,
+    "origin_yc": 6703.8,
+    "destination_xc": 591.3,
+    "destination_yc": 6705.2,
+    "lower_tw": 105,
+    "upper_tw": 135,
+    "max_ride_time": 54,
+    "max_capacity": 4
+  },
+  "D4": {
+    "id": 3,
+    "origin_xc": 572.1,
+    "origin_yc": 6702.1,
+    "destination_xc": 591.3,
+    "destination_yc": 6705.2,
+    "lower_tw": 120,
+    "upper_tw": 160,
+    "max_ride_time": 36,
+    "max_capacity": 4
+  },
+  "D5": {
+    "id": 4,
+    "origin_xc": 566.9,
+    "origin_yc": 6703.0,
+    "destination_xc": 591.3,
+    "destination_yc": 6705.2,
+    "lower_tw": 105,
+    "upper_tw": 135,
+    "max_ride_time": 54,
+    "max_capacity": 4
+  },
+  "D6": {
+    "id": 5,
+    "origin_xc": 559.5,
+    "origin_yc": 6704.6,
+    "destination_xc": 594.2,
+    "destination_yc": 6701.6,
+    "lower_tw": 120,
+    "upper_tw": 160,
+    "max_ride_time": 58,
+    "max_capacity": 4
+  },
+  "D7": {
+    "id": 6,
+    "origin_xc": 561.3,
+    "origin_yc": 6703.8,
+    "destination_xc": 594.2,
+    "destination_yc": 6701.6,
+    "lower_tw": 105,
+    "upper_tw": 135,
+    "max_ride_time": 58,
+    "max_capacity": 4
+  },
+  "D8": {
+    "id": 7,
+    "origin_xc": 566.9,
+    "origin_yc": 6703.0,
+    "destination_xc": 591.3,
+    "destination_yc": 6705.2,
+    "lower_tw": 120,
+    "upper_tw": 160,
+    "max_ride_time": 54,
+    "max_capacity": 4
+  },
+  "D9": {
+    "id": 8,
+    "origin_xc": 554.4,
+    "origin_yc": 6704.4,
+    "destination_xc": 591.3,
+    "destination_yc": 6705.2,
+    "lower_tw": 105,
+    "upper_tw": 135,
+    "max_ride_time": 66,
+    "max_capacity": 4
+  },
+  "D10": {
+    "id": 9,
+    "origin_xc": 553.1,
+    "origin_yc": 6690.3,
+    "destination_xc": 583.8,
+    "destination_yc": 6693.6,
+    "lower_tw": 120,
+    "upper_tw": 160,
+    "max_ride_time": 88,
+    "max_capacity": 4
+  }
+}

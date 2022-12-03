@@ -3,10 +3,15 @@ from gurobipy import Model, GRB, quicksum
 import gurobipy as gp
 import matplotlib.pyplot as plt
 import json
+import time
+import TestExcel as te
 
+te.main("Large Instances/Large2.xlsx")
+start_time = time.time()
 
-passengers_json = json.load(open('Instances: Small/Small 4 Passenger.json'))
-drivers_json = json.load(open('Instances: Small/Small 4 Driver.json'))
+passengers_json = json.load(open('sample_passenger.json'))
+drivers_json = json.load(open('sample_driver.json'))
+
 
 rnd = np.random
 rnd.seed(0)
@@ -401,7 +406,7 @@ def add_constraints():
 
 """Optimize"""
 def optimize():
-    model.Params.TimeLimit = 30
+    model.setParam('MIPGap', 0.05)
     add_constraints()
     model.optimize()
 
@@ -429,7 +434,16 @@ def sort_path(arcs):
             prev_key = d[prev_key]
         sorted_path[driver] = b
         path[driver] = path1
-    return sorted_path, path
+
+    picked_up = {}
+    for driver in path:
+        picked_up_passengers = []
+        for passenger in path[driver]:
+            if passenger in NP:
+                picked_up_passengers.append(passenger)
+        picked_up[driver] = picked_up_passengers
+
+    return sorted_path, path, picked_up
 
 
 def visualize():
@@ -508,11 +522,11 @@ def visualize():
     plt.show()
 
 
-    arcs, path = sort_path(arcs)
+    arcs, path, picked_up = sort_path(arcs)
     print(arcs)
     print(arcsum)
 
-    return arcs
+    return arcs, path, picked_up
 
 def get_feasible_variables():
     for i in model.getVars():
@@ -540,13 +554,44 @@ def create_pareto_front():
 def run_only_once():
     optimize()
     #get_feasible_variables()
-    arcs = visualize()
-    return arcs
+    arcs, path, picked_up = visualize()
+    return arcs, picked_up
 
 def run_pareto():
     create_pareto_front()
 
+def find_extra_travel_time(picked_up):
+    extra_time_per_rider = {}
+    for driver in picked_up:
+        for passenger in picked_up[driver]:
+            pick_up_time = t[driver, passenger].x
+            end_time = t[driver, passenger + nr_passengers].x
+            shortest_path = T_ij[passenger, passenger + nr_passengers]
+            extra_time = (end_time - pick_up_time) - shortest_path
+            extra_time_per_rider[passenger] = extra_time
+        destination_time = t[driver, driver_destination_nodes[driver]].x
+        origin_time = t[driver, driver_origin_nodes[driver]].x
+        direct_arc_time = T_ij[driver_origin_nodes[driver], driver_destination_nodes[driver]]
+        extra_time_per_rider[driver] = (destination_time - origin_time) - direct_arc_time
+
+    return extra_time_per_rider
+
+#run_pareto()
+
+arcs, picked_up = run_only_once()
+runtime = time.time() - start_time
+print('Total runtime: ', runtime)
+print('Optimality gap: ', model.MIPGap)
+print('Number of passengers: ', model.objVal)
+print('Picked up riders: ', picked_up)
+
+extra_time_per_rider = find_extra_travel_time(picked_up)
+print('Extra ride time per rider: ', extra_time_per_rider)
+
+#debug()
 
 
-run_only_once()
+
+
+
 

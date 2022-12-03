@@ -1,0 +1,24 @@
+{
+  "D0": {
+    "id": 0,
+    "origin_xc": 554.3781455129999,
+    "origin_yc": 6704.408422671,
+    "destination_xc": 591.315942423,
+    "destination_yc": 6705.158702589,
+    "lower_tw": 120,
+    "upper_tw": 150,
+    "max_ride_time": 66.0,
+    "max_capacity": 4.0
+  },
+  "D1": {
+    "id": 1,
+    "origin_xc": 554.3791455129999,
+    "origin_yc": 6704.409422671,
+    "destination_xc": 591.316942423,
+    "destination_yc": 6705.1597025890005,
+    "lower_tw": 120,
+    "upper_tw": 150,
+    "max_ride_time": 66.0,
+    "max_capacity": 4.0
+  }
+}

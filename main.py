@@ -3,11 +3,12 @@ from gurobipy import Model, GRB, quicksum
 import gurobipy as gp
 import matplotlib.pyplot as plt
 import json
+import time
 
+start_time = time.time()
 
-
-passengers_json = json.load(open('Instances: Small/Small 4 Passenger.json'))
-drivers_json = json.load(open('Instances: Small/Small 4 Driver.json'))
+passengers_json = json.load(open('sample_passenger.json'))
+drivers_json = json.load(open('sample_driver.json'))
 rnd = np.random
 rnd.seed(0)
 
@@ -407,7 +408,8 @@ def add_constraints():
 """Optimize"""
 def optimize():
 
-    model.Params.TimeLimit = 30
+    #model.Params.TimeLimit = 30
+    model.setParam('MIPGap', 0.05)
     add_constraints()
     model.optimize()
 
@@ -522,14 +524,26 @@ def create_pareto_front():
 
 def run_only_once():
     optimize()
-    get_feasible_variables()
+    #get_feasible_variables()
     visualize()
 
 
 def run_pareto():
     create_pareto_front()
 
+def is_picked_up(passenger):
+    return None
+
+def find_extra_travel_time():
+    extra_time_per_rider = {}
+
+
 #run_pareto()
 run_only_once()
+runtime = time.time() - start_time
+print('Total runtime: ', runtime)
+print('Optimality gap: ', model.MIPGap)
+print('Number of passengers: ', model.objVal)
+print('Extra ride time per rider: ')
 #debug()
 

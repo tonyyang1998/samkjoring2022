@@ -1,0 +1,82 @@
+{
+  "P2": {
+    "id": 2,
+    "origin_xc": 553.111064462,
+    "origin_yc": 6690.301096844,
+    "destination_xc": 594.225804455,
+    "destination_yc": 6701.618244521001,
+    "lower_tw": 120,
+    "upper_tw": 150,
+    "max_ride_time": 96.0
+  },
+  "P3": {
+    "id": 3,
+    "origin_xc": 566.9392859280001,
+    "origin_yc": 6703.005563748,
+    "destination_xc": 594.2268044550001,
+    "destination_yc": 6701.619244521,
+    "lower_tw": 120,
+    "upper_tw": 150,
+    "max_ride_time": 56.0
+  },
+  "P4": {
+    "id": 4,
+    "origin_xc": 554.382145513,
+    "origin_yc": 6704.412422671,
+    "destination_xc": 583.827468196,
+    "destination_yc": 6693.566892202,
+    "lower_tw": 120,
+    "upper_tw": 150,
+    "max_ride_time": 60.0
+  },
+  "P5": {
+    "id": 5,
+    "origin_xc": 564.859087073,
+    "origin_yc": 6700.369149683001,
+    "destination_xc": 591.320942423,
+    "destination_yc": 6705.163702589,
+    "lower_tw": 120,
+    "upper_tw": 150,
+    "max_ride_time": 52.0
+  },
+  "P6": {
+    "id": 6,
+    "origin_xc": 553.115064462,
+    "origin_yc": 6690.305096844,
+    "destination_xc": 591.321942423,
+    "destination_yc": 6705.164702589001,
+    "lower_tw": 120,
+    "upper_tw": 150,
+    "max_ride_time": 94.0
+  },
+  "P7": {
+    "id": 7,
+    "origin_xc": 566.8896627849999,
+    "origin_yc": 6700.5778707849995,
+    "destination_xc": 583.830468196,
+    "destination_yc": 6693.569892202,
+    "lower_tw": 120,
+    "upper_tw": 150,
+    "max_ride_time": 38.0
+  },
+  "P8": {
+    "id": 8,
+    "origin_xc": 572.0186117540001,
+    "origin_yc": 6700.637822936,
+    "destination_xc": 594.2318044550001,
+    "destination_yc": 6701.624244521,
+    "lower_tw": 120,
+    "upper_tw": 150,
+    "max_ride_time": 50.0
+  },
+  "P9": {
+    "id": 9,
+    "origin_xc": 572.019611754,
+    "origin_yc": 6700.638822936,
+    "destination_xc": 584.511583653,
+    "destination_yc": 6703.356950079,
+    "lower_tw": 120,
+    "upper_tw": 150,
+    "max_ride_time": 34.0
+  }
+}

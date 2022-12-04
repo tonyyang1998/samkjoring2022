@@ -616,7 +616,7 @@ for rider in extra_time_per_rider:
     sheet_1.write(i, 0, 'Rider: '+str(rider))
     i += 1
 
-wb.save('Small_1.xls')
+wb.save('Results/Small Instances/Small_1.xls')
 
 #debug()
 

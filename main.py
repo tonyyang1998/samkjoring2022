@@ -8,8 +8,8 @@ import TestExcel as te
 import xlwt
 from xlwt import Workbook
 
-filename = "Small Instances/Small1.xlsx"
-file_to_save = 'Small_1.xls'
+filename = "Medium Instances/Medium5.xlsx"
+file_to_save = 'Results/Medium Instances/Medium_5.xls'
 
 te.main(filename)
 
@@ -526,7 +526,7 @@ def visualize():
         plt.annotate(label, (z, y), ha='center')
 
     plt.legend()
-    #plt.show()
+    plt.show()
 
 
     arcs, path, picked_up = sort_path(arcs)
@@ -614,6 +614,8 @@ for rider in extra_time_per_rider:
     sheet_1.write(i ,4, extra_time_per_rider[rider])
     sheet_1.write(i, 0, 'Rider: '+str(rider))
     i += 1
+
+sheet_1.write(1,5, str(arcs))
 
 wb.save(file_to_save)
 

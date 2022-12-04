@@ -521,7 +521,7 @@ def visualize():
         plt.annotate(label, (z, y), ha='center')
 
     plt.legend()
-    plt.show()
+    #plt.show()
 
 
     arcs, path, picked_up = sort_path(arcs)

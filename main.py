@@ -5,8 +5,13 @@ import matplotlib.pyplot as plt
 import json
 import time
 import TestExcel as te
+import xlwt
+from xlwt import Workbook
 
-te.main("Small Instances/Small2.xlsx")
+filename = "Small Instances/Small1.xlsx"
+file_to_save = 'Small_1.xls'
+
+te.main(filename)
 
 start_time = time.time()
 
@@ -590,6 +595,27 @@ print('Picked up riders: ', picked_up)
 
 extra_time_per_rider = find_extra_travel_time(picked_up)
 print('Extra ride time per rider: ', extra_time_per_rider)
+
+wb = Workbook()
+
+sheet_1 = wb.add_sheet('Sheet 1')
+sheet_1.write(0,1, 'Kjøretid')
+sheet_1.write(0,2, 'Optimalitetsgap')
+sheet_1.write(0,3, 'Passasjerer hentet')
+sheet_1.write(0,4, 'Ekstra reisetid')
+sheet_1.write(0,5, 'Rute')
+
+sheet_1.write(1,1, runtime)
+sheet_1.write(1,2, model.MIPGap)
+sheet_1.write(1,3, model.objVal)
+i = 2
+for rider in extra_time_per_rider:
+
+    sheet_1.write(i ,4, extra_time_per_rider[rider])
+    sheet_1.write(i, 0, 'Rider: '+str(rider))
+    i += 1
+
+wb.save(file_to_save)
 
 #debug()
 

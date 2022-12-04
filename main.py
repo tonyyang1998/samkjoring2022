@@ -9,7 +9,7 @@ import xlwt
 from xlwt import Workbook
 
 filename = "Small Instances/Small1.xlsx"
-file_to_save = 'Small_1.xls'
+
 
 te.main(filename)
 
@@ -610,12 +610,16 @@ sheet_1.write(1,1, runtime)
 sheet_1.write(1,2, model.MIPGap)
 sheet_1.write(1,3, model.objVal)
 i = 2
+
+
+
 for rider in extra_time_per_rider:
 
     sheet_1.write(i ,4, extra_time_per_rider[rider])
     sheet_1.write(i, 0, 'Rider: '+str(rider))
     i += 1
 
+sheet_1.write(1,5, str(arcs))
 wb.save('Results/Small Instances/Small_1.xls')
 
 #debug()

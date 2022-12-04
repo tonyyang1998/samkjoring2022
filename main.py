@@ -6,7 +6,7 @@ import json
 import time
 import TestExcel as te
 
-te.main("Large Instances/Large1.xlsx")
+te.main("Small Instances/Small2.xlsx")
 
 start_time = time.time()
 
@@ -549,7 +549,7 @@ def create_pareto_front():
         model.update()
 
     plt.scatter(list(objective_values.keys()), list(objective_values.values()))
-    plt.show()
+    #plt.show()
     print("Objective values: ", objective_values)
 
 

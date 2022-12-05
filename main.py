@@ -8,8 +8,8 @@ import TestExcel as te
 import xlwt
 from xlwt import Workbook
 
-filename = "Large Instances/Large4.xlsx"
-file_to_save = 'Results/Large Instances/Large_4.xls'
+filename = "Small Instances/Small2.xlsx"
+file_to_save = 'Results/Small Instances/Small_2.xls'
 
 te.main(filename)
 
@@ -412,7 +412,6 @@ def add_constraints():
 
 """Optimize"""
 def optimize():
-    model.setParam('MIPGap', 0.1)
     model.setParam('TimeLimit', 21600)
     add_constraints()
     model.optimize()
@@ -561,6 +560,7 @@ def create_pareto_front():
 def run_only_once():
     optimize()
     #get_feasible_variables()
+    
     arcs, path, picked_up = visualize()
     return arcs, picked_up
 
@@ -609,6 +609,9 @@ sheet_1.write(1,1, runtime)
 sheet_1.write(1,2, model.MIPGap)
 sheet_1.write(1,3, model.objVal)
 i = 2
+
+
+
 
 
 

@@ -1,79 +1,13 @@
 {
   "D0": {
     "id": 0,
-    "origin_xc": 553.109064462,
-    "origin_yc": 6690.299096844,
-    "destination_xc": 594.223804455,
-    "destination_yc": 6701.616244521,
+    "origin_xc": 554.3781455129999,
+    "origin_yc": 6704.408422671,
+    "destination_xc": 591.315942423,
+    "destination_yc": 6705.158702589,
     "lower_tw": 120,
     "upper_tw": 150,
-    "max_ride_time": 96.0,
-    "max_capacity": 4.0
-  },
-  "D1": {
-    "id": 1,
-    "origin_xc": 561.315293509,
-    "origin_yc": 6703.768498438,
-    "destination_xc": 584.503583653,
-    "destination_yc": 6703.348950079,
-    "lower_tw": 120,
-    "upper_tw": 150,
-    "max_ride_time": 42.0,
-    "max_capacity": 4.0
-  },
-  "D2": {
-    "id": 2,
-    "origin_xc": 554.3801455129999,
-    "origin_yc": 6704.410422671001,
-    "destination_xc": 584.5045836529999,
-    "destination_yc": 6703.349950079,
-    "lower_tw": 120,
-    "upper_tw": 150,
-    "max_ride_time": 52.0,
-    "max_capacity": 4.0
-  },
-  "D3": {
-    "id": 3,
-    "origin_xc": 572.0969885250001,
-    "origin_yc": 6702.127942743,
-    "destination_xc": 594.2268044550001,
-    "destination_yc": 6701.619244521,
-    "lower_tw": 120,
-    "upper_tw": 150,
-    "max_ride_time": 38.0,
-    "max_capacity": 4.0
-  },
-  "D4": {
-    "id": 4,
-    "origin_xc": 561.318293509,
-    "origin_yc": 6703.771498438,
-    "destination_xc": 584.506583653,
-    "destination_yc": 6703.351950079,
-    "lower_tw": 120,
-    "upper_tw": 150,
-    "max_ride_time": 42.0,
-    "max_capacity": 4.0
-  },
-  "D5": {
-    "id": 5,
-    "origin_xc": 566.887662785,
-    "origin_yc": 6700.575870785,
-    "destination_xc": 594.228804455,
-    "destination_yc": 6701.621244521,
-    "lower_tw": 120,
-    "upper_tw": 150,
-    "max_ride_time": 46.0,
-    "max_capacity": 4.0
-  },
-  "D6": {
-    "id": 6,
-    "origin_xc": 554.3841455129999,
-    "origin_yc": 6704.4144226710005,
-    "destination_xc": 594.229804455,
-    "destination_yc": 6701.6222445210005,
-    "lower_tw": 120,
-    "upper_tw": 150,
-    "max_ride_time": 68.0,
+    "max_ride_time": 66.0,
     "max_capacity": 4.0
   }
 }

@@ -1,82 +1,12 @@
 {
-  "P2": {
-    "id": 2,
-    "origin_xc": 553.111064462,
-    "origin_yc": 6690.301096844,
-    "destination_xc": 594.225804455,
-    "destination_yc": 6701.618244521001,
+  "P1": {
+    "id": 1,
+    "origin_xc": 564.8550870729999,
+    "origin_yc": 6700.365149683001,
+    "destination_xc": 594.224804455,
+    "destination_yc": 6701.617244521,
     "lower_tw": 120,
     "upper_tw": 150,
-    "max_ride_time": 96.0
-  },
-  "P3": {
-    "id": 3,
-    "origin_xc": 559.505319768,
-    "origin_yc": 6704.599270203,
-    "destination_xc": 583.8264681960001,
-    "destination_yc": 6693.565892202,
-    "lower_tw": 120,
-    "upper_tw": 150,
-    "max_ride_time": 50.0
-  },
-  "P4": {
-    "id": 4,
-    "origin_xc": 572.0979885250001,
-    "origin_yc": 6702.128942743,
-    "destination_xc": 584.506583653,
-    "destination_yc": 6703.351950079,
-    "lower_tw": 120,
-    "upper_tw": 150,
-    "max_ride_time": 22.0
-  },
-  "P5": {
-    "id": 5,
-    "origin_xc": 572.0989885250001,
-    "origin_yc": 6702.129942743,
-    "destination_xc": 591.320942423,
-    "destination_yc": 6705.163702589,
-    "lower_tw": 120,
-    "upper_tw": 150,
-    "max_ride_time": 36.0
-  },
-  "P6": {
-    "id": 6,
-    "origin_xc": 572.016611754,
-    "origin_yc": 6700.635822936,
-    "destination_xc": 591.321942423,
-    "destination_yc": 6705.164702589001,
-    "lower_tw": 120,
-    "upper_tw": 150,
-    "max_ride_time": 48.0
-  },
-  "P7": {
-    "id": 7,
-    "origin_xc": 568.5825109929999,
-    "origin_yc": 6700.8527587809995,
-    "destination_xc": 594.230804455,
-    "destination_yc": 6701.623244521,
-    "lower_tw": 120,
-    "upper_tw": 150,
-    "max_ride_time": 46.0
-  },
-  "P8": {
-    "id": 8,
-    "origin_xc": 566.9442859280001,
-    "origin_yc": 6703.010563748,
-    "destination_xc": 584.510583653,
-    "destination_yc": 6703.355950079,
-    "lower_tw": 120,
-    "upper_tw": 150,
-    "max_ride_time": 40.0
-  },
-  "P9": {
-    "id": 9,
-    "origin_xc": 566.891662785,
-    "origin_yc": 6700.579870785,
-    "destination_xc": 583.832468196,
-    "destination_yc": 6693.5718922020005,
-    "lower_tw": 120,
-    "upper_tw": 150,
-    "max_ride_time": 38.0
+    "max_ride_time": 54.0
   }
 }

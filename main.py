@@ -8,8 +8,8 @@ import TestExcel as te
 import xlwt
 from xlwt import Workbook
 
-filename = "Large Instances/Large1.xlsx"
-file_to_save = 'Results/Large Instances/Large_5.xls'
+filename = "Medium Instances/Small6.xlsx"
+file_to_save = 'Results/Small Instances/Small_6.xls'
 
 te.main(filename)
 

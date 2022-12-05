@@ -3,12 +3,11 @@
 Maximize
  
 Subject To
- R197: 42 x_kij[1,10,7] - t_ki[1,7] + t_ki[1,10] <= 28.17277323538837
- R215: t_ki[1,10] >= 120
- R222: t_ki[1,7] <= 90
+ R937: 28 x_kij[2,11,13] + t_ki[2,11] - t_ki[2,13] <= -5.180140985207423
+ R970: 28 x_kij[2,13,11] - t_ki[2,11] + t_ki[2,13] <= -5.180140985207423
 Bounds
- t_ki[1,7] free
- t_ki[1,10] free
+ t_ki[2,11] free
+ t_ki[2,13] free
 Binaries
- x_kij[1,10,7]
+ x_kij[2,11,13] x_kij[2,13,11]
 End

@@ -8,8 +8,14 @@ import TestExcel as te
 import xlwt
 from xlwt import Workbook
 
+<<<<<<< HEAD
 filename = "Medium Instances/Small6.xlsx"
 file_to_save = 'Results/Small Instances/Small_6.xls'
+=======
+
+filename = "Medium Instances/Medium1.xlsx"
+file_to_save = 'Results/Medium Instances/Medium_1.xls'
+>>>>>>> 24465a0b843cda039da51d66f9d80cb12c244c13
 
 te.main(filename)
 
@@ -305,6 +311,10 @@ AK = process_AK(NK)
 
 model = Model('RRP')
 
+print(driver_origin_nodes)
+for k in D:
+   dest = driver_destination_nodes[k]
+   print(T_ij[(k, dest)])
 
 def set_variables():
     """Add variables"""
@@ -376,7 +386,7 @@ def add_constraints():
 
     '''Time constraint'''
     model.addConstrs(
-        t[(k, i)] + T_ij[(i, j)] - t[(k, j)] - M[k] * (1 - x[k, i, j]) <= 0 for k in D for i in NK[k] for j in NK[k] if
+        t[(k, i)] + T_ij[(i, j)] - t[(k, j)] - M[k] *2* (1 - x[k, i, j]) <= 0 for k in D for i in NK[k] for j in NK[k] if
         (i, j) in AK[k])
 
     model.addConstrs(A_k1[nr_passengers + i] <= t[k, nr_passengers + i] for k in D for i in NPK[k])
@@ -394,7 +404,7 @@ def add_constraints():
         (i, j) in AK[k])
 
     model.addConstrs(
-        t[(k, i)] + T_ij[(i, j)] - t[(k, j)] + M[k] * (1 - x[k, i, j]) >= 0 for k in D for i in NK[k] for j in NK[k] if
+        t[(k, i)] + T_ij[(i, j)] - t[(k, j)] + M[k]*2 * (1 - x[k, i, j]) >= 0 for k in D for i in NK[k] for j in NK[k] if
         (i, j) in AK[k])
 
     '''Capacity constraint'''
@@ -412,7 +422,10 @@ def add_constraints():
 
 """Optimize"""
 def optimize():
+<<<<<<< HEAD
     #model.setParam('MIPGap', 0.1)
+=======
+>>>>>>> 24465a0b843cda039da51d66f9d80cb12c244c13
     model.setParam('TimeLimit', 3600)
     add_constraints()
     model.optimize()
@@ -562,7 +575,7 @@ def run_only_once():
     optimize()
     #get_feasible_variables()
     
-    arcs, path, picked_up = visualize()
+    #arcs, path, picked_up = visualize()
     return arcs, picked_up
 
 def run_pareto():
@@ -586,8 +599,10 @@ def find_extra_travel_time(picked_up):
 
 #run_pareto()
 
+
+
 arcs, picked_up = run_only_once()
-runtime = time.time() - start_time
+"""runtime = time.time() - start_time
 print('Total runtime: ', runtime)
 print('Optimality gap: ', model.MIPGap)
 print('Total number of passengers', nr_passengers)
@@ -609,12 +624,12 @@ sheet_1.write(0,5, 'Rute')
 sheet_1.write(1,1, runtime)
 sheet_1.write(1,2, model.MIPGap)
 sheet_1.write(1,3, model.objVal)
-i = 2
+i = 2"""
 
 
 
 
-
+"""
 
 for rider in extra_time_per_rider:
 
@@ -624,10 +639,11 @@ for rider in extra_time_per_rider:
 
 sheet_1.write(1,5, str(arcs))
 
-wb.save(file_to_save)
+wb.save(file_to_save)"""
 
 
-#debug()
+
+debug()
 
 
 

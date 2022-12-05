@@ -9,6 +9,7 @@ import xlwt
 from xlwt import Workbook
 
 filename = "Large Instances/Large5.xlsx"
+file_to_save = "Results/Large Instances/Large5.xlsx"
 
 
 te.main(filename)
@@ -620,7 +621,7 @@ for rider in extra_time_per_rider:
     i += 1
 
 sheet_1.write(1,5, str(arcs))
-wb.save('Results/Small Instances/Small_1.xls')
+wb.save(file_to_save)
 
 #debug()
 

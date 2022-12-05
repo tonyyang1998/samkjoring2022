@@ -8,8 +8,8 @@ import TestExcel as te
 import xlwt
 from xlwt import Workbook
 
-filename = "Medium Instances/Small6.xlsx"
-file_to_save = 'Results/Small Instances/Small_6.xls'
+filename = "Small Instances/Small4.xlsx"
+file_to_save = 'Results/Small Instances/Small_4.xls'
 
 te.main(filename)
 
@@ -412,7 +412,7 @@ def add_constraints():
 
 """Optimize"""
 def optimize():
-    model.setParam('TimeLimit', 21600)
+    model.setParam('TimeLimit', 3600)
     add_constraints()
     model.optimize()
 

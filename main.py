@@ -8,7 +8,8 @@ import TestExcel as te
 import xlwt
 from xlwt import Workbook
 
-filename = "Large Instances/Large5.xlsx"
+filename = "Large Instances/Large2.xlsx"
+file_to_save = 'Results/Large Instances/Large2.xls'
 
 
 te.main(filename)
@@ -17,6 +18,7 @@ start_time = time.time()
 
 passengers_json = json.load(open('sample_passenger.json'))
 drivers_json = json.load(open('sample_driver.json'))
+
 
 rnd = np.random
 rnd.seed(0)
@@ -438,7 +440,6 @@ def sort_path(arcs):
             path1.append(prev_key)
             b.append((prev_key, d[prev_key]))
             prev_key = d[prev_key]
-  
         sorted_path[driver] = b
         path[driver] = path1
 
@@ -554,14 +555,14 @@ def create_pareto_front():
         model.update()
 
     plt.scatter(list(objective_values.keys()), list(objective_values.values()))
-    plt.show()
+    #plt.show()
     print("Objective values: ", objective_values)
 
 
 def run_only_once():
     optimize()
     #get_feasible_variables()
-
+    
     arcs, path, picked_up = visualize()
     return arcs, picked_up
 
@@ -613,6 +614,9 @@ i = 2
 
 
 
+
+
+
 for rider in extra_time_per_rider:
 
     sheet_1.write(i ,4, extra_time_per_rider[rider])
@@ -620,7 +624,9 @@ for rider in extra_time_per_rider:
     i += 1
 
 sheet_1.write(1,5, str(arcs))
-wb.save('Results/Small Instances/Small_1.xls')
+
+wb.save(file_to_save)
+
 
 #debug()
 

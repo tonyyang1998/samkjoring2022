@@ -9,8 +9,8 @@ import xlwt
 from xlwt import Workbook
 
 
-filename = "Medium Instances/Medium2.xlsx"
-file_to_save = 'Results/Medium Instances/Medium_2.xls'
+filename = "Large Instances/Large4.xlsx"
+file_to_save = 'Results/Large Instances/Large_4.xls'
 
 te.main(filename)
 
@@ -581,7 +581,7 @@ def create_pareto_front():
 
 def run_only_once():
     optimize()
-    get_feasible_variables()
+   #get_feasible_variables()
     
     arcs, path, picked_up = visualize()
     return arcs, picked_up

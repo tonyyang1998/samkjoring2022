@@ -9,13 +9,8 @@ import xlwt
 from xlwt import Workbook
 
 
-<<<<<<< HEAD
-filename = "Medium Instances/Medium2.xlsx"
-file_to_save = 'Results/Medium Instances/Medium_2.xls'
-=======
-filename = "Medium Instances/Medium3.xlsx"
-file_to_save = 'Results/Medium Instances/Medium_3.xls'
->>>>>>> e356f2d3c5636b0934d3a82bed32848a85bbc27e
+filename = "Medium Instances/Medium1.xlsx"
+file_to_save = 'Results/Medium Instances/Medium_1.xls'
 
 te.main(filename)
 
@@ -312,10 +307,7 @@ AK = process_AK(NK)
 
 model = Model('RRP')
 
-print(driver_origin_nodes)
-for k in D:
-   dest = driver_destination_nodes[k]
-   print(T_ij[(k, dest)])
+
 
 def set_variables():
     """Add variables"""
@@ -425,10 +417,17 @@ def add_constraints():
 def optimize():
     model.setParam('TimeLimit', 3600)
     add_constraints()
-    model.optimize()
-    if where == GRB.Callback.MESSAGE:
-        value = model.cbGet(GRB.Callback.MESSAGE_MSG_STRING)
-        print(value)
+    model.optimize(my_callback)
+
+
+"""def my_callback(model, where):
+    if where == GRB.Callback.MIP:
+        current_best = model.cbGet(GRB.Callback.MIP_OBJBST)
+        current_bound = model.cbGet(GRB.Callback.MIP_OBJBND)
+        runtime = model.cbGet(GRB.Callback.RUNTIME)
+        print("Current solution: ", current_best)
+        print("Current bound: ", current_bound)
+        print("Runtime: ", runtime)"""
 
 
 """Visualization & debug"""
@@ -573,7 +572,7 @@ def create_pareto_front():
 
 def run_only_once():
     optimize()
-    get_feasible_variables()
+    #get_feasible_variables()
     
     arcs, path, picked_up = visualize()
     return arcs, picked_up

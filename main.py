@@ -9,8 +9,8 @@ import xlwt
 from xlwt import Workbook
 
 
-filename = "Small Instances/Small6.xlsx"
-file_to_save = 'Results/Small Instances/Small_6.xls'
+filename = "Medium Instances/Medium2.xlsx"
+file_to_save = 'Results/Medium Instances/Medium_2.xls'
 
 te.main(filename)
 
@@ -98,10 +98,7 @@ driver_destination_nodes = {k: d_k[k] for k in D}
 def initialize_big_M():
     result={}
     for driver in D:
-<<<<<<< HEAD
-        print(T_k[driver])
-=======
->>>>>>> e070693a1522509c6d5059a99ae3baa414e06c92
+       
         result[driver] = T_k[driver] * 2
     return result
 
@@ -624,8 +621,6 @@ sheet_1.write(1,3, model.objVal)
 i = 2
 
 
-<<<<<<< HEAD
-=======
 
 
 total_extra_driver_time = 0
@@ -639,7 +634,6 @@ min_driver_extra = 0
 max_passenger_extra = 0
 min_passenger_extra = 0
 
->>>>>>> e070693a1522509c6d5059a99ae3baa414e06c92
 for rider in extra_time_per_rider:
     if rider in D:
         total_extra_driver_time += extra_time_per_rider[rider]
@@ -686,12 +680,9 @@ sheet_1.write(0, 11, 'Maximum extra passenger time')
 
 sheet_1.write(1,5, str(arcs))
 
-<<<<<<< HEAD
-=======
 sheet_1.write(0, 14, "Best bound")
 sheet_1.write(1, 14, model.ObjBound)
 
->>>>>>> e070693a1522509c6d5059a99ae3baa414e06c92
 wb.save(file_to_save)
 
 

@@ -432,9 +432,12 @@ def my_callback(model, where):
         current_bound = model.cbGet(GRB.Callback.MIP_OBJBND)
         runtime = model.cbGet(GRB.Callback.RUNTIME)
         if current_best not in result_solution:
-            result_solution.append(current_best)
-            result_bound.append(current_bound)
-            result_time.append(runtime)
+            if current_best<0:
+                result_solution.append(0)
+            else:
+                result_solution.append(current_best)
+                result_bound.append(current_bound)
+                result_time.append(runtime)
 
 
 """Visualization & debug"""
@@ -475,6 +478,7 @@ def sort_path(arcs):
 def visualize():
     arcs = {}
     arcsum = {}
+    plt.figure(1)
     for k in D:
         active_arcs = [a for a in AK[k] if x[k, a[0], a[1]].x > 0.99]
         arc_sum = 0
@@ -703,11 +707,39 @@ print(result_solution)
 print(result_bound)
 print(result_time)
 
+"""result_time.insert(0,0)
 
-#def get_objective_time_graph_for_instances():
+if model.objVal == result_bound[-1]:
+    result_solution.append(result_bound[-1])
+    result_time.append(model.Runtime)
 
 
+if model.objVal != result_bound[-1]:
+    print("Hei")
+    last_solution = result_solution[-1]
+    for i in range(int(result_time[-1]), 3600):
+        print(i)
+        result_solution.append(last_solution)
+    for i in range(int(result_time[-1]), 3601):
+        result_time.append(i)
 
+def get_graph():
+    plt.figure(2)
+    plt.xlim(-160, 3800)
+    plt.ylim(-1, result_bound[-1] + 1)
+    plt.axhline(y = result_bound[0], color = 'r', linestyle = 'dashed', label = "UB = " + str(result_bound[-1]))
+    plt.axvline(x = 3600, color = 'y', linestyle = 'dashed', label = "Time = 3600s" )
+
+    plt.plot(result_time, result_solution)
+    plt.ylabel('Passengers served')
+    plt.xlabel('Time [s]')
+    plt.legend()
+    
+    plt.legend(bbox_to_anchor = (0.85, 1.2), loc = 'upper center')
+    
+    plt.show()
+
+get_graph()"""
 
 
 #debug()

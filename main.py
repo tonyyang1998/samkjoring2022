@@ -9,8 +9,8 @@ import xlwt
 from xlwt import Workbook
 
 
-filename = "Medium Instances/Medium1.xlsx"
-file_to_save = 'Results/Medium Instances/Medium_1.xls'
+filename = "Medium Instances/Medium3.xlsx"
+file_to_save = 'Results/Medium Instances/Medium_3.xls'
 
 te.main(filename)
 
@@ -420,6 +420,9 @@ def optimize():
     model.setParam('TimeLimit', 3600)
     add_constraints()
     model.optimize()
+    if where == GRB.Callback.MESSAGE:
+        value = model.cbGet(GRB.Callback.MESSAGE_MSG_STRING)
+        print(value)
 
 
 """Visualization & debug"""

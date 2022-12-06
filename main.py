@@ -98,7 +98,10 @@ driver_destination_nodes = {k: d_k[k] for k in D}
 def initialize_big_M():
     result={}
     for driver in D:
+<<<<<<< HEAD
         print(T_k[driver])
+=======
+>>>>>>> e070693a1522509c6d5059a99ae3baa414e06c92
         result[driver] = T_k[driver] * 2
     return result
 
@@ -531,7 +534,7 @@ def visualize():
         plt.annotate(label, (z, y), ha='center')
 
     plt.legend()
-    plt.show()
+    #plt.show()
 
 
     arcs, path, picked_up = sort_path(arcs)
@@ -565,7 +568,7 @@ def create_pareto_front():
 
 def run_only_once():
     optimize()
-    #get_feasible_variables()
+    get_feasible_variables()
     
     arcs, path, picked_up = visualize()
     return arcs, picked_up
@@ -601,6 +604,8 @@ print('Total number of passengers', nr_passengers)
 print('Number of picked up passengers: ', model.objVal)
 print('Picked up riders: ', picked_up)
 
+print("Best bound: ", model.ObjBound)
+
 extra_time_per_rider = find_extra_travel_time(picked_up)
 print('Extra ride time per rider: ', extra_time_per_rider)
 
@@ -619,14 +624,74 @@ sheet_1.write(1,3, model.objVal)
 i = 2
 
 
-for rider in extra_time_per_rider:
+<<<<<<< HEAD
+=======
 
-    sheet_1.write(i ,4, extra_time_per_rider[rider])
-    sheet_1.write(i, 0, 'Rider: '+str(rider))
-    i += 1
+
+total_extra_driver_time = 0
+total_shortest_path_driver = 0
+number_of_drivers = 0
+total_extra_passenger_time = 0
+total_shortest_path_passenger = 0
+number_of_passengers = 0
+max_driver_extra = 0
+min_driver_extra = 0
+max_passenger_extra = 0
+min_passenger_extra = 0
+
+>>>>>>> e070693a1522509c6d5059a99ae3baa414e06c92
+for rider in extra_time_per_rider:
+    if rider in D:
+        total_extra_driver_time += extra_time_per_rider[rider]
+        total_shortest_path_driver += T_ij[rider, driver_destination_nodes[rider]]
+        if extra_time_per_rider[rider] >= max_driver_extra:
+            max_driver_extra = extra_time_per_rider[rider]
+        if extra_time_per_rider[rider] <= min_driver_extra:
+            min_driver_extra = extra_time_per_rider[rider]
+        number_of_drivers += 1
+    else: 
+        total_extra_passenger_time += extra_time_per_rider[rider]
+        total_shortest_path_passenger += T_ij[rider, rider + nr_passengers]
+        if extra_time_per_rider[rider] >= max_passenger_extra:
+            max_passenger_extra = extra_time_per_rider[rider]
+        if extra_time_per_rider[rider] <= min_passenger_extra:
+            min_passenger_extra = extra_time_per_rider[rider]
+        number_of_passengers += 1
+    
+average_extra_driver_time = total_extra_driver_time / number_of_drivers
+average_extra_passenger_time = total_extra_passenger_time / number_of_passengers
+average_shortest_path_driver = total_shortest_path_driver / number_of_drivers
+average_shortest_path_passenger = total_shortest_path_passenger / number_of_passengers
+
+sheet_1.write(1 ,7, average_extra_driver_time)
+sheet_1.write(0, 7, 'Average extra driver time')
+sheet_1.write(1, 6, average_extra_passenger_time)
+sheet_1.write(0, 6, 'Average extra passenger time')
+
+sheet_1.write(1 ,9, average_extra_driver_time  / average_shortest_path_driver) 
+sheet_1.write(0, 9, 'Average extra driver time in %')
+sheet_1.write(1, 8, average_extra_passenger_time  / average_shortest_path_passenger)
+sheet_1.write(0, 8, 'Average extra passenger time in %')
+
+sheet_1.write(1 ,12, min_driver_extra)
+sheet_1.write(0, 12, 'Minimum extra driver time')
+sheet_1.write(1, 10, min_passenger_extra)
+sheet_1.write(0, 10, 'Minimum extra passenger time')
+
+sheet_1.write(1 ,13, max_driver_extra)
+sheet_1.write(0, 13, 'Maximum extra driver time')
+sheet_1.write(1, 11, max_passenger_extra)
+sheet_1.write(0, 11, 'Maximum extra passenger time')
+
 
 sheet_1.write(1,5, str(arcs))
 
+<<<<<<< HEAD
+=======
+sheet_1.write(0, 14, "Best bound")
+sheet_1.write(1, 14, model.ObjBound)
+
+>>>>>>> e070693a1522509c6d5059a99ae3baa414e06c92
 wb.save(file_to_save)
 
 

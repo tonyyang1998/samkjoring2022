@@ -1,6 +1,7 @@
 {
   "D0": {
     "id": 0,
+<<<<<<< HEAD
     "origin_xc": 553.109064462,
     "origin_yc": 6690.299096844,
     "destination_xc": 584.502583653,
@@ -8,21 +9,31 @@
     "lower_tw": 120,
     "upper_tw": 150,
     "max_ride_time": 80.0,
+=======
+    "origin_xc": 566.882662785,
+    "origin_yc": 6700.570870785,
+    "destination_xc": 591.315942423,
+    "destination_yc": 6705.158702589,
+    "lower_tw": 120,
+    "upper_tw": 150,
+    "max_ride_time": 44.0,
+>>>>>>> e070693a1522509c6d5059a99ae3baa414e06c92
     "max_capacity": 4.0
   },
   "D1": {
     "id": 1,
-    "origin_xc": 572.0949885250001,
-    "origin_yc": 6702.125942743,
-    "destination_xc": 591.316942423,
-    "destination_yc": 6705.1597025890005,
+    "origin_xc": 570.922384723,
+    "origin_yc": 6701.101440955,
+    "destination_xc": 594.224804455,
+    "destination_yc": 6701.617244521,
     "lower_tw": 120,
     "upper_tw": 150,
-    "max_ride_time": 36.0,
+    "max_ride_time": 46.0,
     "max_capacity": 4.0
   },
   "D2": {
     "id": 2,
+<<<<<<< HEAD
     "origin_xc": 564.8560870729999,
     "origin_yc": 6700.366149683001,
     "destination_xc": 584.5045836529999,
@@ -30,6 +41,37 @@
     "lower_tw": 120,
     "upper_tw": 150,
     "max_ride_time": 38.0,
+=======
+    "origin_xc": 551.466510389,
+    "origin_yc": 6708.264405665,
+    "destination_xc": 583.825468196,
+    "destination_yc": 6693.564892202001,
+    "lower_tw": 120,
+    "upper_tw": 150,
+    "max_ride_time": 66.0,
+    "max_capacity": 4.0
+  },
+  "D3": {
+    "id": 3,
+    "origin_xc": 570.665150688,
+    "origin_yc": 6698.573605428,
+    "destination_xc": 583.8264681960001,
+    "destination_yc": 6693.565892202,
+    "lower_tw": 120,
+    "upper_tw": 150,
+    "max_ride_time": 48.0,
+    "max_capacity": 4.0
+  },
+  "D4": {
+    "id": 4,
+    "origin_xc": 562.630117645,
+    "origin_yc": 6686.515171345,
+    "destination_xc": 594.2278044550001,
+    "destination_yc": 6701.620244521,
+    "lower_tw": 120,
+    "upper_tw": 150,
+    "max_ride_time": 88.0,
+>>>>>>> e070693a1522509c6d5059a99ae3baa414e06c92
     "max_capacity": 4.0
   }
 }

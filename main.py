@@ -9,8 +9,8 @@ import xlwt
 from xlwt import Workbook
 
 
-filename = "Medium Instances/Medium3.xlsx"
-file_to_save = 'Results/Medium Instances/Medium_3.xls'
+filename = "Medium Instances/Medium2.xlsx"
+file_to_save = 'Results/Medium Instances/Medium_2.xls'
 
 te.main(filename)
 
@@ -419,10 +419,24 @@ def add_constraints():
 def optimize():
     model.setParam('TimeLimit', 3600)
     add_constraints()
-    model.optimize()
-    if where == GRB.Callback.MESSAGE:
-        value = model.cbGet(GRB.Callback.MESSAGE_MSG_STRING)
-        print(value)
+    model.optimize(my_callback)
+
+
+
+result_solution = []
+result_bound = []
+result_time = []
+
+def my_callback(model, where):
+    
+    if where == GRB.Callback.MIP:
+        current_best = model.cbGet(GRB.Callback.MIP_OBJBST)
+        current_bound = model.cbGet(GRB.Callback.MIP_OBJBND)
+        runtime = model.cbGet(GRB.Callback.RUNTIME)
+        if current_best not in result_solution:
+            result_solution.append(current_best)
+            result_bound.append(current_bound)
+            result_time.append(runtime)
 
 
 """Visualization & debug"""
@@ -686,6 +700,10 @@ sheet_1.write(0, 14, "Best bound")
 sheet_1.write(1, 14, model.ObjBound)
 
 wb.save(file_to_save)
+
+print(result_solution)
+print(result_bound)
+print(result_time)
 
 
 

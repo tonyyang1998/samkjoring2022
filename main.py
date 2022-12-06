@@ -707,7 +707,7 @@ print(result_solution)
 print(result_bound)
 print(result_time)
 
-"""result_time.insert(0,0)
+result_time.insert(0,0)
 
 if model.objVal == result_bound[-1]:
     result_solution.append(result_bound[-1])
@@ -739,7 +739,7 @@ def get_graph():
     
     plt.show()
 
-get_graph()"""
+get_graph()
 
 
 #debug()

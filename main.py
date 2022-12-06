@@ -9,8 +9,13 @@ import xlwt
 from xlwt import Workbook
 
 
+<<<<<<< HEAD
 filename = "Medium Instances/Medium2.xlsx"
 file_to_save = 'Results/Medium Instances/Medium_2.xls'
+=======
+filename = "Medium Instances/Medium3.xlsx"
+file_to_save = 'Results/Medium Instances/Medium_3.xls'
+>>>>>>> e356f2d3c5636b0934d3a82bed32848a85bbc27e
 
 te.main(filename)
 
@@ -421,6 +426,9 @@ def optimize():
     model.setParam('TimeLimit', 3600)
     add_constraints()
     model.optimize()
+    if where == GRB.Callback.MESSAGE:
+        value = model.cbGet(GRB.Callback.MESSAGE_MSG_STRING)
+        print(value)
 
 
 """Visualization & debug"""

@@ -9,8 +9,13 @@ import xlwt
 from xlwt import Workbook
 
 
+<<<<<<< HEAD
 filename = "Medium Instances/Medium1.xlsx"
 file_to_save = 'Results/Medium Instances/Medium_1.xls'
+=======
+filename = "Medium Instances/Medium2.xlsx"
+file_to_save = 'Results/Medium Instances/Medium_2.xls'
+>>>>>>> d7576a4208b0626622faf17d612eb0e757a2f246
 
 te.main(filename)
 
@@ -420,14 +425,31 @@ def optimize():
     model.optimize(my_callback)
 
 
+<<<<<<< HEAD
 """def my_callback(model, where):
+=======
+
+result_solution = []
+result_bound = []
+result_time = []
+
+def my_callback(model, where):
+    
+>>>>>>> d7576a4208b0626622faf17d612eb0e757a2f246
     if where == GRB.Callback.MIP:
         current_best = model.cbGet(GRB.Callback.MIP_OBJBST)
         current_bound = model.cbGet(GRB.Callback.MIP_OBJBND)
         runtime = model.cbGet(GRB.Callback.RUNTIME)
+<<<<<<< HEAD
         print("Current solution: ", current_best)
         print("Current bound: ", current_bound)
         print("Runtime: ", runtime)"""
+=======
+        if current_best not in result_solution:
+            result_solution.append(current_best)
+            result_bound.append(current_bound)
+            result_time.append(runtime)
+>>>>>>> d7576a4208b0626622faf17d612eb0e757a2f246
 
 
 """Visualization & debug"""
@@ -691,6 +713,10 @@ sheet_1.write(0, 14, "Best bound")
 sheet_1.write(1, 14, model.ObjBound)
 
 wb.save(file_to_save)
+
+print(result_solution)
+print(result_bound)
+print(result_time)
 
 
 

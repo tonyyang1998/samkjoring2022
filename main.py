@@ -9,8 +9,8 @@ import xlwt
 from xlwt import Workbook
 
 
-filename = "Medium Instances/Medium2.xlsx"
-file_to_save = 'Results/Medium Instances/Medium_2.xls'
+filename = "Large Instances 1,5/Large1,1.5.xlsx"
+file_to_save = 'Results/Large Instances 1,5/Large_1,1.5.xls'
 
 te.main(filename)
 
@@ -707,7 +707,9 @@ print(result_solution)
 print(result_bound)
 print(result_time)
 
-result_time.insert(0,0)
+
+
+"""result_time.insert(0,0)
 
 if model.objVal == result_bound[-1]:
     result_solution.append(result_bound[-1])
@@ -739,7 +741,7 @@ def get_graph():
     
     plt.show()
 
-get_graph()
+get_graph()"""
 
 
 #debug()

@@ -650,10 +650,14 @@ max_driver_extra = 0
 min_driver_extra = 0
 max_passenger_extra = 0
 min_passenger_extra = 0
+extra_percentage_per_driver = 0
+extra_percentage_per_passenger = 0
+
 
 for rider in extra_time_per_rider:
     if rider in D:
         total_extra_driver_time += extra_time_per_rider[rider]
+        extra_percentage_per_driver += extra_time_per_rider[rider] / T_k[rider]
         total_shortest_path_driver += T_ij[rider, driver_destination_nodes[rider]]
         if extra_time_per_rider[rider] >= max_driver_extra:
             max_driver_extra = extra_time_per_rider[rider]
@@ -662,6 +666,7 @@ for rider in extra_time_per_rider:
         number_of_drivers += 1
     else: 
         total_extra_passenger_time += extra_time_per_rider[rider]
+        extra_percentage_per_passenger += extra_time_per_rider[rider] / T_k[rider]
         total_shortest_path_passenger += T_ij[rider, rider + nr_passengers]
         if extra_time_per_rider[rider] >= max_passenger_extra:
             max_passenger_extra = extra_time_per_rider[rider]
@@ -679,9 +684,9 @@ sheet_1.write(0, 7, 'Average extra driver time')
 sheet_1.write(1, 6, average_extra_passenger_time)
 sheet_1.write(0, 6, 'Average extra passenger time')
 
-sheet_1.write(1 ,9, average_extra_driver_time  / average_shortest_path_driver) 
+sheet_1.write(1 ,9, extra_percentage_per_driver / number_of_drivers) 
 sheet_1.write(0, 9, 'Average extra driver time in %')
-sheet_1.write(1, 8, average_extra_passenger_time  / average_shortest_path_passenger)
+sheet_1.write(1, 8, extra_percentage_per_passenger / number_of_passengers)
 sheet_1.write(0, 8, 'Average extra passenger time in %')
 
 sheet_1.write(1 ,12, min_driver_extra)

@@ -1,43 +1,60 @@
 import matplotlib.pyplot as plt
 
-objVal = 41
+objVal = 6
+model_time = 77
 
 
-
-result_solution = [0, 11.0, 22.0, 24.0, 26.0, 27.0, 36.0, 40.0, 41.0]
-result_bound = [44.999999999999986, 44.99999999993048, 44.99999999993048, 44.99999999993048, 44.99999999993048, 44.99999999993048, 44.99999999993048, 45]
-result_time = [55.60800004005432, 312.279000043869, 2013.6779999732971, 2013.6949999332428, 2013.7160000801086, 2088.667000055313, 2088.6829998493195, 3332.3079998493195]
-
+#small5
+result_solution = [0, 2.0, 4.0, 5.0, 6.0]
+result_bound = [9.0, 9.0, 9.0, 9.0, 6]
+result_time = [0.2709999084472656, 0.495999813079834, 0.8399999141693115, 1.0269999504089355, model_time]
 
 
 if objVal == result_bound[-1]:
-    for i in range(len(result_solution), 3600):
-        result_solution.append(result_bound[-1])
-    for i in range(len(result_time), 3600):
-        result_time.append(i)
+    for i in range(int(result_solution[-1]), 3800):
+        if len(result_solution) !=3600:
+            result_solution.append(result_bound[-1])
+    for i in range(int(result_time[-1]), 3690):
+        if len(result_time)!=3600 and result_time[-1]<=3600:
+            result_time.append(i)
 
 
 if objVal != result_bound[-1]:
     last_solution = result_solution[-1]
-    for i in range(int(result_time[-1]), 3600):
-        print(i)
-        result_solution.append(last_solution)
-    for i in range(int(result_time[-1]), 3601):
-        result_time.append(i)
+    for i in range(int(result_time[-1]), 3800):
+        if len(result_solution) !=3600:
+            result_solution.append(last_solution)
+    for i in range(int(result_time[-1]), 3801):
+        if len(result_time)!=3600 and result_time[-1]<=3600:
+                result_time.append(i)
+                
 
-  
+last_bound_value=result_bound[0]
+
+last_bound=result_bound[-1]
+for i in range(int(result_bound[-1]), 3800):
+    if len(result_bound)!=len(result_time):
+        result_bound.append(last_bound)
+
+ny_result_solution  = [0, 2.0, 4.0, 5.0, 6.0]
+ny_result_time=[0.2709999084472656, 0.495999813079834, 0.8399999141693115, 1.0269999504089355, model_time]
+
+print(result_time)
+
+print(result_bound)
 def get_graph():
     plt.figure(2)
     plt.xlim(-160, 3800)
-    plt.ylim(-1, result_bound[-1] + 1)
-    plt.axhline(y = result_bound[0], color = 'r', linestyle = 'dashed', label = "UB = " + str(result_bound[-1]))
+    plt.ylim(-1, last_bound_value + 1)
     plt.axvline(x = 3600, color = 'y', linestyle = 'dashed', label = "Time = 3600s" )
-    plt.plot(result_time, result_solution)
+    plt.plot(ny_result_time, ny_result_solution)
+    plt.plot(result_time, result_bound, color='red', linestyle='dashed', label="Upper bound")
     plt.ylabel('Passengers served')
     plt.xlabel('Time [s]')
     plt.legend()
-    
     plt.legend(bbox_to_anchor = (0.85, 1.2), loc = 'upper center')
+
+
     
     plt.show()
 

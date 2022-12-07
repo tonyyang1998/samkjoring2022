@@ -9,8 +9,8 @@ import xlwt
 from xlwt import Workbook
 
 
-filename = "Large Instances 1,5/Large1,1.5.xlsx"
-file_to_save = 'Results/Large Instances 1,5/Large_1,1.5.xls'
+filename = "Medium Instances 1,5/Medium4,1.5.xlsx"
+file_to_save = 'Results/Medium Instances 1,5/Medium_4,1.5.xls'
 
 te.main(filename)
 
@@ -98,7 +98,6 @@ driver_destination_nodes = {k: d_k[k] for k in D}
 def initialize_big_M():
     result={}
     for driver in D:
-       
         result[driver] = T_k[driver] * 2
     return result
 

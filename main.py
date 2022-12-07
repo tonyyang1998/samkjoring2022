@@ -9,8 +9,8 @@ import xlwt
 from xlwt import Workbook
 
 
-filename = "Large Instances 1,5/Large1,1.5.xlsx"
-file_to_save = 'Results/Large Instances 1,5/Large_1,1.5.xls'
+filename = "Small Instances 1,5/Small3,1.5.xlsx"
+file_to_save = 'Results/Small Instances 1,5/Small_3,1.5.xls'
 
 te.main(filename)
 
@@ -706,8 +706,6 @@ wb.save(file_to_save)
 print(result_solution)
 print(result_bound)
 print(result_time)
-
-
 
 """result_time.insert(0,0)
 

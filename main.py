@@ -9,8 +9,8 @@ import xlwt
 from xlwt import Workbook
 
 
-filename = "Medium Instances 1,5/Medium2,1.5.xlsx"
-file_to_save = 'Results/Medium Instances 1,5/Medium_2,1.5.xls'
+filename = "Large Instances 1,5/Large3,1.5.xlsx"
+file_to_save = 'Results Large Adjusted/Large_1.9.xls'
 
 te.main(filename)
 
@@ -80,12 +80,12 @@ def add_parameters():
     for drivers in drivers_json:
         o_k[drivers_json[drivers]['id']] = drivers_json[drivers]['id']
         d_k[drivers_json[drivers]['id']] = drivers_json[drivers]['id'] + nr_passengers * 2 + nr_drivers
-        T_k[drivers_json[drivers]['id']] = drivers_json[drivers]['max_ride_time']
+        T_k[drivers_json[drivers]['id']] = drivers_json[drivers]['max_ride_time'] * 1.9/1.5
         Q_k[drivers_json[drivers]['id']] = drivers_json[drivers]['max_capacity']
         A_k1[drivers_json[drivers]['id'] + nr_passengers * 2 + nr_drivers] = drivers_json[drivers]['lower_tw']
         A_k2[drivers_json[drivers]['id'] + nr_passengers * 2 + nr_drivers] = drivers_json[drivers]['upper_tw']
     for passengers in passengers_json:
-        T_k[passengers_json[passengers]['id']] = passengers_json[passengers]['max_ride_time']
+        T_k[passengers_json[passengers]['id']] = passengers_json[passengers]['max_ride_time'] * 1.9/1.5
         A_k1[passengers_json[passengers]['id'] + nr_passengers] = passengers_json[passengers]['lower_tw']
         A_k2[passengers_json[passengers]['id'] + nr_passengers] = passengers_json[passengers]['upper_tw']
 
@@ -98,7 +98,7 @@ driver_destination_nodes = {k: d_k[k] for k in D}
 def initialize_big_M():
     result={}
     for driver in D:
-        result[driver] = T_k[driver] * 2
+        result[driver] = T_k[driver] * 2.5
     return result
 
 
@@ -437,6 +437,10 @@ def my_callback(model, where):
                 result_solution.append(current_best)
                 result_bound.append(current_bound)
                 result_time.append(runtime)
+        if current_bound not in result_bound:
+            result_solution.append(current_best)
+            result_bound.append(current_bound)
+            result_time.append(runtime)
 
 
 """Visualization & debug"""

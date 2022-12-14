@@ -9,8 +9,8 @@ import xlwt
 from xlwt import Workbook
 
 
-filename = "Small Instances 1,5/Small3,1.5.xlsx"
-file_to_save = 'Results/Small Instances 1,5/Small_3,1.5.xls'
+filename = "Small Instances 1,5/Small4,1.5.xlsx"
+file_to_save = 'Results/Small Instances 1,5/Small_4,1.5.xls'
 
 te.main(filename)
 

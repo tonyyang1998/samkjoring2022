@@ -9,13 +9,8 @@ import xlwt
 from xlwt import Workbook
 
 
-<<<<<<< HEAD
 filename = "Small Instances 1,5/Small4,1.5.xlsx"
 file_to_save = 'Results/Small Instances 1,5/Small_4,1.5.xls'
-=======
-filename = "Large Instances 1,5/Large2,1.5.xlsx"
-file_to_save = 'Results Large Adjusted/Large2_1.9.xls'
->>>>>>> 3231f675705cd0245d8c76a57b12dda6637ee283
 
 te.main(filename)
 

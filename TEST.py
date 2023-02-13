@@ -63,6 +63,8 @@ NP = N[int(len(D)):int(len(N) / 2)]
 ND = N[int(len(N) / 2):-int(len(D))]
 A = [(i, j) for i in N for j in N if i != j]
 
+print(A)
+
 delivery_and_pickup_node_pairs = {ND[i]: NP[i] for i in range(len(ND))}
 pickup_and_delivery_node_pairs = {NP[i]: ND[i] for i in range(len(ND))}
 
@@ -147,8 +149,6 @@ def create_Tij():
         print(destination)
         #print(df1.loc[origin, destination])
     
-
-print(create_Tij())
 
 T_ij = {(i, j): np.hypot(xc[i] - xc[j], yc[i] - yc[j]) for i, j in A}
 

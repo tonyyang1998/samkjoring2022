@@ -7,7 +7,7 @@ def main(input):
 
     capacity = df2['Capacity']
 
-    df3 = df2[['Rider', 'Origin X in distance', 'Origin Y in distance', 'Destination X in distance', 'Destination Y in distance', 'Max Ride time']]
+    df3 = df2[['Rider','Origin location', 'Origin X in distance', 'Origin Y in distance', 'Destination X in distance', 'Destination Y in distance', 'Max Ride time']]
 
     df1 = df3.dropna()
 

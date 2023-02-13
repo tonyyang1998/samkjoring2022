@@ -642,8 +642,6 @@ sheet_1.write(1,3, model.objVal)
 i = 2
 
 
-
-
 total_extra_driver_time = 0
 total_shortest_path_driver = 0
 number_of_drivers = 0

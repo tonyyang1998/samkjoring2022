@@ -3,11 +3,11 @@ import json
 
 
 def main(input):
+    
     df2 = pd.read_excel(input)
 
     capacity = df2['Capacity']
-
-    df3 = df2[['Rider','Origin location', 'Origin X in distance', 'Origin Y in distance', 'Destination X in distance', 'Destination Y in distance', 'Max Ride time']]
+    df3 = df2[['Rider','Origin location',  'Origin X in distance', 'Origin Y in distance', "Destination location", 'Destination X in distance', 'Destination Y in distance', 'Max Ride time']]
 
     df1 = df3.dropna()
 
@@ -24,10 +24,13 @@ def main(input):
 
     sample_passenger = {}
     sample_driver = {}
-
+    
     for i in numbers:
         object = {}
         object['id'] = i
+
+        object["origin_location"] = df["Origin location"][i]
+        object["destination_location"] = df["Destination location"][i]
         object['origin_xc'] = df['Origin X in distance'][i]+0.001*i
         object['origin_yc'] = df['Origin Y in distance'][i]+0.001*i
         object['destination_xc'] = df['Destination X in distance'][i]+0.001*i
